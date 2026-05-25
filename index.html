@@ -4,135 +4,207 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- PWA Manifest Link -->
     <link rel="manifest" href="/manifest.json">
 
-    <!-- Website Logo / Favicon -->
     <link rel="icon" type="image/png" href="ChatGPT Image May 25, 2026, 07_59_27 AM.png">
 
     <title>मोर्स कोड गेम - राम रमन</title>
 
     <style>
+        /* Modern Premium CSS Stylesheet */
         * { 
             box-sizing: border-box; 
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            font-family: 'Arial Rounded MT Bold', Arial, sans-serif;
-            background: #1a1a2e;
-            color: white;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: radial-gradient(circle at center, #222244 0%, #0f0f1a 100%);
+            color: #ffffff;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
-            transition: background 0.7s ease;
+            min-height: 100vh;
             overflow: hidden;
+            perspective: 1000px;
         }
 
-        /* Start Screen */
+        /* Animated Background Bubbles */
+        .bg-glow {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(45deg, #00d2ff, #00d2ff);
+            filter: blur(120px);
+            opacity: 0.15;
+            border-radius: 50%;
+            top: 10%;
+            left: 10%;
+            animation: floatGlow 8s infinite alternate;
+            z-index: 1;
+        }
+
+        @keyframes floatGlow {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(50px, 50px) scale(1.2); }
+        }
+
+        /* Start Screen Overlay */
         #start-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: #1a1a2e;
+            background: rgba(15, 15, 26, 0.95);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 100;
+            backdrop-filter: blur(10px);
+            transition: all 0.5s ease;
+        }
+
+        h1.title {
+            font-size: 42px;
+            margin-bottom: 30px;
+            color: #f1c40f;
+            text-shadow: 0 0 20px rgba(241, 196, 15, 0.6);
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-align: center;
         }
 
         .start-btn {
-            padding: 20px 50px;
-            font-size: 30px;
-            background: #f1c40f;
+            padding: 18px 55px;
+            font-size: 24px;
+            background: linear-gradient(135deg, #f1c40f 0%, #f39c12 100%);
             color: #1a1a2e;
             border: none;
             border-radius: 50px;
             cursor: pointer;
             font-weight: bold;
-            box-shadow: 0 0 20px rgba(241, 196, 15, 0.5);
-            animation: pulse 1.5s infinite;
+            box-shadow: 0 10px 30px rgba(241, 196, 15, 0.4);
+            transform-style: preserve-3d;
+            transition: all 0.3s ease;
         }
 
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
+        .start-btn:hover {
+            transform: scale(1.05) translateY(-3px);
+            box-shadow: 0 15px 35px rgba(241, 196, 15, 0.6);
         }
 
+        .start-btn:active {
+            transform: scale(0.98) translateY(1px);
+        }
+
+        /* Main Game Container Card */
         .game-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            padding: 30px;
-            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 35px 30px;
+            border-radius: 32px;
             text-align: center;
-            width: 380px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
             display: none;
             position: relative;
+            z-index: 10;
+            animation: fadeInCard 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
+        @keyframes fadeInCard {
+            0% { opacity: 0; transform: translateY(40px) scale(0.9); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* Score Board */
         .score-board {
-            font-size: 22px;
-            margin-bottom: 20px;
+            font-size: 20px;
+            margin-bottom: 25px;
             color: #00d2ff;
-            font-weight: bold;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-shadow: 0 0 10px rgba(0, 210, 255, 0.3);
         }
 
+        /* Big Character Display */
         .char-display {
-            background: white;
+            background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
             color: #1a1a2e;
-            width: 110px;
-            height: 110px;
-            line-height: 110px;
-            font-size: 65px;
-            border-radius: 25px;
-            margin: 0 auto 20px;
-            box-shadow: 0 10px 20px rgba(255,255,255,0.2);
+            width: 120px;
+            height: 120px;
+            line-height: 120px;
+            font-size: 70px;
+            border-radius: 28px;
+            margin: 0 auto 25px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3), 0 0 0 8px rgba(255, 255, 255, 0.05);
             font-weight: 900;
+            transition: all 0.3s ease;
         }
 
+        /* Buttons Grid Area */
         .options-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            gap: 18px;
+            margin-top: 15px;
         }
 
         button.opt {
-            padding: 18px;
-            font-size: 24px;
-            border: 3px solid transparent;
-            border-radius: 15px;
-            background: rgba(255,255,255,0.2);
+            padding: 20px 10px;
+            font-size: 26px;
+            font-weight: bold;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.06);
             color: white;
             cursor: pointer;
-            transition: all 0.3s;
-            font-family: monospace;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: 'Courier New', Courier, monospace;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
         }
 
-        /* Correct and Wrong Styles */
+        button.opt:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Game State Classes (Correct, Wrong, Highlight) */
         .correct { 
-            background: #2ecc71 !important; 
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%) !important; 
             border-color: #ffffff !important;
-            transform: scale(1.05); 
-            color: white;
+            transform: scale(1.05) !important; 
+            color: white !important;
+            box-shadow: 0 10px 25px rgba(46, 204, 113, 0.5) !important;
         }
 
         .wrong { 
-            background: #e74c3c !important; 
-            transform: scale(0.95); 
-            color: white;
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%) !important; 
+            border-color: transparent !important;
+            transform: scale(0.95) !important; 
+            color: white !important;
+            box-shadow: 0 10px 25px rgba(231, 76, 60, 0.4) !important;
         }
 
         .show-right {
-            border: 4px solid #2ecc71 !important;
-            background: rgba(46, 204, 113, 0.3) !important;
+            border: 3px solid #2ecc71 !important;
+            background: rgba(46, 204, 113, 0.2) !important;
+            animation: blinkRight 0.5s infinite alternate;
         }
 
+        @keyframes blinkRight {
+            0% { rgba(46, 204, 113, 0.2); }
+            100% { rgba(46, 204, 113, 0.4); box-shadow: 0 0 15px rgba(46, 204, 113, 0.4); }
+        }
+
+        /* Win Modal Overlay */
         #win-screen {
             display: none;
             position: absolute;
@@ -140,23 +212,36 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: #1a1a2e;
-            border-radius: 30px;
+            background: #0f0f1a;
+            border-radius: 32px;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 10;
+            z-index: 100;
+            padding: 20px;
+        }
+
+        #win-screen p {
+            font-size: 18px;
+            margin: 15px 0 30px;
+            color: #ccc;
+        }
+
+        /* Status message text */
+        #msg {
+            margin-top: 20px;
+            font-size: 18px;
+            min-height: 24px;
         }
     </style>
 </head>
 
 <body>
 
-<div id="start-overlay">
-    <h1 style="margin-bottom: 30px; color: #f1c40f;">
-        मोर्स कोड गेम
-    </h1>
+<div class="bg-glow"></div>
 
+<div id="start-overlay">
+    <h1 class="title">मोर्स कोड गेम</h1>
     <button class="start-btn" onclick="startGame()">
         शुरू करें (TAP)
     </button>
@@ -165,17 +250,11 @@
 <div class="game-card" id="main-game">
 
     <div id="win-screen">
-        <h1 style="color: #f1c40f;">
+        <h1 style="color: #f1c40f; font-size: 36px; text-shadow: 0 0 15px rgba(241,196,15,0.5);">
             🏆 विजेता! 🏆
         </h1>
-
-        <p>
-            राम रमन, आपने गेम जीत लिया है!
-        </p>
-
-        <button class="start-btn"
-                onclick="location.reload()"
-                style="font-size: 18px; padding: 10px 20px;">
+        <p>राम रमन, आपने गेम जीत लिया है!</p>
+        <button class="start-btn" onclick="location.reload()" style="font-size: 18px; padding: 12px 30px;">
             फिर से खेलें
         </button>
     </div>
@@ -186,190 +265,127 @@
 
     <div class="char-display" id="char">?</div>
 
-    <p style="color: #ccc;">
-        कोड चुनें:
-    </p>
+    <p style="color: #aaa; font-size: 15px; margin-bottom: 5px;">सही कोड चुनें:</p>
 
     <div class="options-grid" id="options"></div>
 
-    <p id="msg"
-       style="margin-top: 15px; font-weight: bold;">
-    </p>
+    <p id="msg"></p>
 
 </div>
 
 <script>
-
+    // Morse Code Library Dataset
     const morseCodes = {
-        'A': '.-',
-        'B': '-...',
-        'C': '-.-.',
-        'D': '-..',
-        'E': '.',
-        'F': '..-.',
-        'G': '--.',
-        'H': '....',
-        'I': '..',
-        'J': '.---',
-        'K': '-.-',
-        'L': '.-..',
-        'M': '--',
-        'N': '-.',
-        'O': '---',
-        'P': '.--.',
-        'Q': '--.-',
-        'R': '.-.',
-        'S': '...',
-        'T': '-',
-        'U': '..-',
-        'V': '...-',
-        'W': '.--',
-        'X': '-..-',
-        'Y': '-.--',
-        'Z': '--..'
+        'A': '.-', 'B': '-...', 'C': '-.-.', 'D': '-..', 'E': '.',
+        'F': '..-.', 'G': '--.', 'H': '....', 'I': '..', 'J': '.---',
+        'K': '-.-', 'L': '.-..', 'M': '--', 'N': '-.', 'O': '---',
+        'P': '.--.', 'Q': '--.-', 'R': '.-.', 'S': '...', 'T': '-',
+        'U': '..-', 'V': '...-', 'W': '.--', 'X': '-..-', 'Y': '-.--', 'Z': '--..'
     };
 
     let score = 0;
     let currentKey = "";
     let canClick = true;
 
+    // Hindi Text To Speech Voice System
     function speakHindi(text) {
-
-        const utter = new SpeechSynthesisUtterance(text);
-
-        utter.lang = 'hi-IN';
-        utter.pitch = 0.8;
-        utter.rate = 1.0;
-
-        window.speechSynthesis.speak(utter);
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel(); // Stop any ongoing speech
+            const utter = new SpeechSynthesisUtterance(text);
+            utter.lang = 'hi-IN';
+            utter.pitch = 1.0;
+            utter.rate = 1.0;
+            window.speechSynthesis.speak(utter);
+        }
     }
 
+    // Trigger Game Start Session
     function startGame() {
-
-        document.getElementById('start-overlay').style.display = 'none';
-
-        document.getElementById('main-game').style.display = 'block';
-
-        speakHindi("राम रमन, आपका गेम में स्वागत है");
-
-        loadNewQuestion();
+        document.getElementById('start-overlay').style.opacity = '0';
+        setTimeout(() => {
+            document.getElementById('start-overlay').style.display = 'none';
+            document.getElementById('main-game').style.display = 'block';
+            speakHindi("राम रमन, आपका गेम में स्वागत है");
+            loadNewQuestion();
+        }, 400);
     }
 
+    // Generate Question Logic Module
     function loadNewQuestion() {
-
         if (score >= 10) {
-
             document.getElementById('win-screen').style.display = 'flex';
-
             speakHindi("बधाई हो, राम रमन! आप जीत गए हैं।");
-
             return;
         }
 
         canClick = true;
-
         const keys = Object.keys(morseCodes);
-
         currentKey = keys[Math.floor(Math.random() * keys.length)];
-
+        
         document.getElementById('char').innerText = currentKey;
-
         document.getElementById('msg').innerText = "";
 
         const correct = morseCodes[currentKey];
-
         let options = [correct];
 
         while (options.length < 4) {
-
-            let rand = Object.values(morseCodes)[
-                Math.floor(Math.random() * 26)
-            ];
-
+            let rand = Object.values(morseCodes)[Math.floor(Math.random() * 26)];
             if (!options.includes(rand)) {
                 options.push(rand);
             }
         }
 
         options.sort(() => Math.random() - 0.5);
-
         const container = document.getElementById('options');
-
         container.innerHTML = "";
 
         options.forEach(opt => {
-
             const btn = document.createElement('button');
-
             btn.className = "opt";
-
             btn.innerText = opt;
-
             btn.dataset.code = opt;
-
             btn.onclick = () => check(opt, btn);
-
             container.appendChild(btn);
         });
     }
 
+    // Checking Result Answer Verification System
     function check(selected, btn) {
-
         if (!canClick) return;
-
         canClick = false;
 
         const correctCode = morseCodes[currentKey];
 
         if (selected === correctCode) {
-
             score++;
-
             document.getElementById('score').innerText = score;
-
             btn.classList.add('correct');
-
-            document.body.style.background =
-                `hsl(${Math.random() * 360}, 40%, 15%)`;
-
             speakHindi("सही जवाब");
-
-            setTimeout(loadNewQuestion, 1000);
-
+            setTimeout(loadNewQuestion, 1200);
         } else {
-
             btn.classList.add('wrong');
-
             const buttons = document.querySelectorAll('.opt');
-
             buttons.forEach(b => {
-
                 if (b.dataset.code === correctCode) {
-
                     b.classList.add('show-right');
                 }
             });
 
-            document.getElementById('msg').innerHTML =
-                `<span style="color:#e74c3c">
-                    गलत जवाब!
-                </span>`;
-
+            document.getElementById('msg').innerHTML = `<span style="color:#e74c3c; font-weight:bold;">गलत जवाब!</span>`;
             speakHindi("गलत जवाब");
-
-            setTimeout(loadNewQuestion, 2000);
+            setTimeout(loadNewQuestion, 2200);
         }
     }
 
-    // Service Worker Registration Code
+    // Progressive Web App PWA Service Worker Hook Registration 
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('/sw.js')
                 .then((registration) => {
-                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                    console.log('ServiceWorker registered perfectly with scope: ', registration.scope);
                 })
                 .catch((error) => {
-                    console.log('ServiceWorker registration failed: ', error);
+                    console.log('ServiceWorker registration process failed: ', error);
                 });
         });
     }
