@@ -380,7 +380,8 @@
     // Progressive Web App PWA Service Worker Hook Registration 
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/sw.js')
+            // Yahan se '/' hata kar sahi path kar diya hai
+            navigator.serviceWorker.register('sw.js')
                 .then((registration) => {
                     console.log('ServiceWorker registered perfectly with scope: ', registration.scope);
                 })
