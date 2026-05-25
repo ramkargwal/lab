@@ -3,9 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Website Logo / Favicon -->
+    <link rel="icon" type="image/png" href="ChatGPT Image May 25, 2026, 07_59_27 AM.png">
+
     <title>मोर्स कोड गेम - राम रमन</title>
+
     <style>
-        * { box-sizing: border-box; }
+        * { 
+            box-sizing: border-box; 
+        }
+
         body {
             font-family: 'Arial Rounded MT Bold', Arial, sans-serif;
             background: #1a1a2e;
@@ -22,7 +30,10 @@
         /* Start Screen */
         #start-overlay {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: #1a1a2e;
             display: flex;
             flex-direction: column;
@@ -107,11 +118,13 @@
             transform: scale(1.05); 
             color: white;
         }
+
         .wrong { 
             background: #e74c3c !important; 
             transform: scale(0.95); 
             color: white;
         }
+
         .show-right {
             border: 4px solid #2ecc71 !important;
             background: rgba(46, 204, 113, 0.3) !important;
@@ -120,7 +133,10 @@
         #win-screen {
             display: none;
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: #1a1a2e;
             border-radius: 30px;
             flex-direction: column;
@@ -130,34 +146,84 @@
         }
     </style>
 </head>
+
 <body>
 
 <div id="start-overlay">
-    <h1 style="margin-bottom: 30px; color: #f1c40f;">मोर्स कोड गेम</h1>
-    <button class="start-btn" onclick="startGame()">शुरू करें (TAP)</button>
+    <h1 style="margin-bottom: 30px; color: #f1c40f;">
+        मोर्स कोड गेम
+    </h1>
+
+    <button class="start-btn" onclick="startGame()">
+        शुरू करें (TAP)
+    </button>
 </div>
 
 <div class="game-card" id="main-game">
+
     <div id="win-screen">
-        <h1 style="color: #f1c40f;">🏆 विजेता! 🏆</h1>
-        <p>राम रमन, आपने गेम जीत लिया है!</p>
-        <button class="start-btn" onclick="location.reload()" style="font-size: 18px; padding: 10px 20px;">फिर से खेलें</button>
+        <h1 style="color: #f1c40f;">
+            🏆 विजेता! 🏆
+        </h1>
+
+        <p>
+            राम रमन, आपने गेम जीत लिया है!
+        </p>
+
+        <button class="start-btn"
+                onclick="location.reload()"
+                style="font-size: 18px; padding: 10px 20px;">
+            फिर से खेलें
+        </button>
     </div>
 
-    <div class="score-board">स्कोर: <span id="score">0</span> / 10</div>
+    <div class="score-board">
+        स्कोर: <span id="score">0</span> / 10
+    </div>
+
     <div class="char-display" id="char">?</div>
-    <p style="color: #ccc;">कोड चुनें:</p>
+
+    <p style="color: #ccc;">
+        कोड चुनें:
+    </p>
+
     <div class="options-grid" id="options"></div>
-    <p id="msg" style="margin-top: 15px; font-weight: bold;"></p>
+
+    <p id="msg"
+       style="margin-top: 15px; font-weight: bold;">
+    </p>
+
 </div>
-<link rel="icon" type="image/png" href="ChatGPT Image May 25, 2026, 07_59_27 AM.png">
+
 <script>
+
     const morseCodes = {
-        'A': '.-', 'B': '-...', 'C': '-.-.', 'D': '-..', 'E': '.', 'F': '..-.',
-        'G': '--.', 'H': '....', 'I': '..', 'J': '.---', 'K': '-.-', 'L': '.-..',
-        'M': '--', 'N': '-.', 'O': '---', 'P': '.--.', 'Q': '--.-', 'R': '.-.',
-        'S': '...', 'T': '-', 'U': '..-', 'V': '...-', 'W': '.--', 'X': '-..-',
-        'Y': '-.--', 'Z': '--..'
+        'A': '.-',
+        'B': '-...',
+        'C': '-.-.',
+        'D': '-..',
+        'E': '.',
+        'F': '..-.',
+        'G': '--.',
+        'H': '....',
+        'I': '..',
+        'J': '.---',
+        'K': '-.-',
+        'L': '.-..',
+        'M': '--',
+        'N': '-.',
+        'O': '---',
+        'P': '.--.',
+        'Q': '--.-',
+        'R': '.-.',
+        'S': '...',
+        'T': '-',
+        'U': '..-',
+        'V': '...-',
+        'W': '.--',
+        'X': '-..-',
+        'Y': '-.--',
+        'Z': '--..'
     };
 
     let score = 0;
@@ -165,85 +231,133 @@
     let canClick = true;
 
     function speakHindi(text) {
+
         const utter = new SpeechSynthesisUtterance(text);
+
         utter.lang = 'hi-IN';
-        utter.pitch = 0.8; 
+        utter.pitch = 0.8;
         utter.rate = 1.0;
+
         window.speechSynthesis.speak(utter);
     }
 
     function startGame() {
+
         document.getElementById('start-overlay').style.display = 'none';
+
         document.getElementById('main-game').style.display = 'block';
+
         speakHindi("राम रमन, आपका गेम में स्वागत है");
+
         loadNewQuestion();
     }
 
     function loadNewQuestion() {
+
         if (score >= 10) {
+
             document.getElementById('win-screen').style.display = 'flex';
+
             speakHindi("बधाई हो, राम रमन! आप जीत गए हैं।");
+
             return;
         }
 
         canClick = true;
+
         const keys = Object.keys(morseCodes);
+
         currentKey = keys[Math.floor(Math.random() * keys.length)];
+
         document.getElementById('char').innerText = currentKey;
+
         document.getElementById('msg').innerText = "";
 
         const correct = morseCodes[currentKey];
+
         let options = [correct];
-        while(options.length < 4) {
-            let rand = Object.values(morseCodes)[Math.floor(Math.random() * 26)];
-            if(!options.includes(rand)) options.push(rand);
+
+        while (options.length < 4) {
+
+            let rand = Object.values(morseCodes)[
+                Math.floor(Math.random() * 26)
+            ];
+
+            if (!options.includes(rand)) {
+                options.push(rand);
+            }
         }
+
         options.sort(() => Math.random() - 0.5);
 
         const container = document.getElementById('options');
+
         container.innerHTML = "";
+
         options.forEach(opt => {
+
             const btn = document.createElement('button');
+
             btn.className = "opt";
+
             btn.innerText = opt;
-            btn.dataset.code = opt; // Store code for identification
+
+            btn.dataset.code = opt;
+
             btn.onclick = () => check(opt, btn);
+
             container.appendChild(btn);
         });
     }
 
     function check(selected, btn) {
-        if(!canClick) return;
+
+        if (!canClick) return;
+
         canClick = false;
 
         const correctCode = morseCodes[currentKey];
 
-        if(selected === correctCode) {
+        if (selected === correctCode) {
+
             score++;
+
             document.getElementById('score').innerText = score;
+
             btn.classList.add('correct');
-            document.body.style.background = `hsl(${Math.random() * 360}, 40%, 15%)`;
+
+            document.body.style.background =
+                `hsl(${Math.random() * 360}, 40%, 15%)`;
+
             speakHindi("सही जवाब");
+
             setTimeout(loadNewQuestion, 1000);
+
         } else {
-            // Wrong Answer logic
+
             btn.classList.add('wrong');
-            
-            // Find and highlight the correct button with a green border
+
             const buttons = document.querySelectorAll('.opt');
+
             buttons.forEach(b => {
-                if(b.dataset.code === correctCode) {
+
+                if (b.dataset.code === correctCode) {
+
                     b.classList.add('show-right');
                 }
             });
 
-            document.getElementById('msg').innerHTML = `<span style="color:#e74c3c">गलत जवाब!</span>`;
+            document.getElementById('msg').innerHTML =
+                `<span style="color:#e74c3c">
+                    गलत जवाब!
+                </span>`;
+
             speakHindi("गलत जवाब");
-            
-            // Give user more time to see the correct answer
+
             setTimeout(loadNewQuestion, 2000);
         }
     }
+
 </script>
 
 </body>
