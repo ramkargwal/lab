@@ -1,69 +1,432 @@
-<!-- ========================= -->
-<!-- COMPLETE MORSE TABLE -->
-<!-- ========================= -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<div class="card">
+<title>Morse Code Studio</title>
 
-    <h2 class="section-title">📚 Complete Morse Code Reference</h2>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <div class="table-wrap">
+<style>
 
-        <table>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
 
-            <tr>
-                <th>Character</th>
-                <th>Morse Code</th>
-                <th>Character</th>
-                <th>Morse Code</th>
-            </tr>
+body{
+    font-family:'Poppins',sans-serif;
+    min-height:100vh;
+    background:
+    linear-gradient(135deg,#0f172a,#111827);
 
-            <!-- Letters -->
+    color:white;
+    overflow-x:hidden;
+}
 
-            <tr><td>A</td><td>.-</td><td>N</td><td>-.</td></tr>
-            <tr><td>B</td><td>-...</td><td>O</td><td>---</td></tr>
-            <tr><td>C</td><td>-.-.</td><td>P</td><td>.--.</td></tr>
-            <tr><td>D</td><td>-..</td><td>Q</td><td>--.-</td></tr>
-            <tr><td>E</td><td>.</td><td>R</td><td>.-.</td></tr>
-            <tr><td>F</td><td>..-.</td><td>S</td><td>...</td></tr>
-            <tr><td>G</td><td>--.</td><td>T</td><td>-</td></tr>
-            <tr><td>H</td><td>....</td><td>U</td><td>..-</td></tr>
-            <tr><td>I</td><td>..</td><td>V</td><td>...-</td></tr>
-            <tr><td>J</td><td>.---</td><td>W</td><td>.--</td></tr>
-            <tr><td>K</td><td>-.-</td><td>X</td><td>-..-</td></tr>
-            <tr><td>L</td><td>.-..</td><td>Y</td><td>-.--</td></tr>
-            <tr><td>M</td><td>--</td><td>Z</td><td>--..</td></tr>
+/* Background Glow */
 
-            <!-- Numbers -->
+body::before{
+    content:"";
+    position:fixed;
+    width:500px;
+    height:500px;
+    background:#7c3aed;
+    filter:blur(150px);
+    top:-200px;
+    left:-200px;
+    opacity:0.4;
+}
 
-            <tr><td>0</td><td>-----</td><td>1</td><td>.----</td></tr>
-            <tr><td>2</td><td>..---</td><td>3</td><td>...--</td></tr>
-            <tr><td>4</td><td>....-</td><td>5</td><td>.....</td></tr>
-            <tr><td>6</td><td>-....</td><td>7</td><td>--...</td></tr>
-            <tr><td>8</td><td>---..</td><td>9</td><td>----.</td></tr>
+body::after{
+    content:"";
+    position:fixed;
+    width:500px;
+    height:500px;
+    background:#06b6d4;
+    filter:blur(150px);
+    bottom:-200px;
+    right:-200px;
+    opacity:0.4;
+}
 
-            <!-- Symbols -->
+/* Main Container */
 
-            <tr><td>.</td><td>.-.-.-</td><td>,</td><td>--..--</td></tr>
-            <tr><td>?</td><td>..--..</td><td>'</td><td>.----.</td></tr>
-            <tr><td>!</td><td>-.-.--</td><td>/</td><td>-..-.</td></tr>
-            <tr><td>(</td><td>-.--.</td><td>)</td><td>-.--.-</td></tr>
-            <tr><td>&</td><td>.-...</td><td>:</td><td>---...</td></tr>
-            <tr><td>;</td><td>-.-.-.</td><td>=</td><td>-...-</td></tr>
-            <tr><td>+</td><td>.-.-.</td><td>-</td><td>-....-</td></tr>
-            <tr><td>_</td><td>..--.-</td><td>"</td><td>.-..-.</td></tr>
-            <tr><td>$</td><td>...-..-</td><td>@</td><td>.--.-.</td></tr>
+.container{
+    width:90%;
+    max-width:1200px;
+    margin:auto;
+    padding:40px 0;
+    position:relative;
+    z-index:1;
+}
 
-        </table>
+/* Heading */
+
+.main-title{
+    text-align:center;
+    margin-bottom:40px;
+}
+
+.main-title h1{
+    font-size:60px;
+    margin-bottom:15px;
+
+    background:linear-gradient(to right,#ffffff,#c4b5fd,#67e8f9);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+
+.main-title p{
+    color:#cbd5e1;
+    font-size:18px;
+}
+
+/* Card */
+
+.card{
+    background:rgba(255,255,255,0.08);
+    border:1px solid rgba(255,255,255,0.12);
+    backdrop-filter:blur(12px);
+
+    padding:35px;
+    border-radius:30px;
+
+    margin-bottom:35px;
+
+    box-shadow:
+    0 10px 30px rgba(0,0,0,0.35);
+}
+
+.section-title{
+    font-size:28px;
+    margin-bottom:25px;
+}
+
+/* Textarea */
+
+textarea{
+    width:100%;
+    min-height:180px;
+
+    background:rgba(0,0,0,0.25);
+    color:white;
+
+    border:none;
+    outline:none;
+
+    border-radius:20px;
+
+    padding:20px;
+
+    font-size:18px;
+
+    resize:vertical;
+
+    border:1px solid rgba(255,255,255,0.08);
+
+    transition:0.3s;
+}
+
+textarea:focus{
+    border:1px solid #67e8f9;
+    box-shadow:0 0 20px rgba(6,182,212,0.35);
+}
+
+textarea::placeholder{
+    color:#94a3b8;
+}
+
+/* Buttons */
+
+.buttons{
+    margin-top:25px;
+
+    display:flex;
+    gap:15px;
+    flex-wrap:wrap;
+}
+
+button{
+    border:none;
+    cursor:pointer;
+
+    padding:15px 25px;
+
+    border-radius:15px;
+
+    font-size:16px;
+    font-weight:600;
+
+    color:white;
+
+    transition:0.3s;
+}
+
+button:hover{
+    transform:translateY(-4px);
+}
+
+.btn1{
+    background:linear-gradient(135deg,#7c3aed,#4f46e5);
+}
+
+.btn2{
+    background:linear-gradient(135deg,#06b6d4,#0891b2);
+}
+
+.btn3{
+    background:linear-gradient(135deg,#1e293b,#0f172a);
+}
+
+/* Output */
+
+.output{
+    margin-top:25px;
+
+    min-height:120px;
+
+    background:rgba(0,0,0,0.25);
+
+    border-radius:20px;
+
+    padding:20px;
+
+    font-size:22px;
+
+    color:#67e8f9;
+
+    border:1px solid rgba(255,255,255,0.08);
+
+    word-break:break-word;
+}
+
+/* Table */
+
+.table-wrap{
+    overflow:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th{
+    background:
+    linear-gradient(135deg,#7c3aed,#06b6d4);
+
+    padding:18px;
+    text-align:left;
+}
+
+td{
+    padding:16px;
+
+    border-bottom:
+    1px solid rgba(255,255,255,0.08);
+}
+
+tr:hover{
+    background:
+    rgba(255,255,255,0.05);
+}
+
+/* Footer */
+
+footer{
+    text-align:center;
+    padding:30px;
+    color:#94a3b8;
+}
+
+/* Responsive */
+
+@media(max-width:768px){
+
+    .main-title h1{
+        font-size:42px;
+    }
+
+    .buttons{
+        flex-direction:column;
+    }
+
+    button{
+        width:100%;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- Heading -->
+
+    <div class="main-title">
+
+        <h1>⚡ Morse Code Studio</h1>
+
+        <p>
+            Beautiful Morse Code Converter Website
+        </p>
+
+    </div>
+
+    <!-- Text To Morse -->
+
+    <div class="card">
+
+        <h2 class="section-title">
+            🔤 Text To Morse
+        </h2>
+
+        <textarea
+        id="textInput"
+        placeholder="Type your text here..."></textarea>
+
+        <div class="buttons">
+
+            <button
+            class="btn1"
+            onclick="convertToMorse()">
+
+            Convert To Morse
+
+            </button>
+
+            <button
+            class="btn2"
+            onclick="copyOutput()">
+
+            Copy Output
+
+            </button>
+
+            <button
+            class="btn3"
+            onclick="clearAll()">
+
+            Clear
+
+            </button>
+
+        </div>
+
+        <div
+        class="output"
+        id="output">
+
+        Morse code will appear here...
+
+        </div>
+
+    </div>
+
+    <!-- Morse To Text -->
+
+    <div class="card">
+
+        <h2 class="section-title">
+            📡 Morse To Text
+        </h2>
+
+        <textarea
+        id="morseInput"
+        placeholder="Enter Morse code here..."></textarea>
+
+        <div class="buttons">
+
+            <button
+            class="btn1"
+            onclick="convertToText()">
+
+            Decode Morse
+
+            </button>
+
+        </div>
+
+        <div
+        class="output"
+        id="decoded">
+
+        Decoded text will appear here...
+
+        </div>
+
+    </div>
+
+    <!-- Morse Table -->
+
+    <div class="card">
+
+        <h2 class="section-title">
+            📚 Complete Morse Code Reference
+        </h2>
+
+        <div class="table-wrap">
+
+            <table>
+
+                <tr>
+                    <th>Character</th>
+                    <th>Morse</th>
+                    <th>Character</th>
+                    <th>Morse</th>
+                </tr>
+
+                <!-- Letters -->
+
+                <tr><td>A</td><td>.-</td><td>N</td><td>-.</td></tr>
+                <tr><td>B</td><td>-...</td><td>O</td><td>---</td></tr>
+                <tr><td>C</td><td>-.-.</td><td>P</td><td>.--.</td></tr>
+                <tr><td>D</td><td>-..</td><td>Q</td><td>--.-</td></tr>
+                <tr><td>E</td><td>.</td><td>R</td><td>.-.</td></tr>
+                <tr><td>F</td><td>..-.</td><td>S</td><td>...</td></tr>
+                <tr><td>G</td><td>--.</td><td>T</td><td>-</td></tr>
+                <tr><td>H</td><td>....</td><td>U</td><td>..-</td></tr>
+                <tr><td>I</td><td>..</td><td>V</td><td>...-</td></tr>
+                <tr><td>J</td><td>.---</td><td>W</td><td>.--</td></tr>
+                <tr><td>K</td><td>-.-</td><td>X</td><td>-..-</td></tr>
+                <tr><td>L</td><td>.-..</td><td>Y</td><td>-.--</td></tr>
+                <tr><td>M</td><td>--</td><td>Z</td><td>--..</td></tr>
+
+                <!-- Numbers -->
+
+                <tr><td>0</td><td>-----</td><td>1</td><td>.----</td></tr>
+                <tr><td>2</td><td>..---</td><td>3</td><td>...--</td></tr>
+                <tr><td>4</td><td>....-</td><td>5</td><td>.....</td></tr>
+                <tr><td>6</td><td>-....</td><td>7</td><td>--...</td></tr>
+                <tr><td>8</td><td>---..</td><td>9</td><td>----.</td></tr>
+
+                <!-- Symbols -->
+
+                <tr><td>.</td><td>.-.-.-</td><td>,</td><td>--..--</td></tr>
+                <tr><td>?</td><td>..--..</td><td>!</td><td>-.-.--</td></tr>
+                <tr><td>@</td><td>.--.-.</td><td>$</td><td>...-..-</td></tr>
+                <tr><td>&</td><td>.-...</td><td>+</td><td>.-.-.</td></tr>
+
+            </table>
+
+        </div>
 
     </div>
 
 </div>
 
-<!-- ========================= -->
-<!-- COMPLETE MORSE SCRIPT -->
-<!-- ========================= -->
+<footer>
+    Made With ❤️ Morse Studio
+</footer>
 
 <script>
+
+/* Morse Dictionary */
 
 const morseCode = {
 
@@ -108,50 +471,56 @@ const morseCode = {
     ".":".-.-.-",
     ",":"--..--",
     "?":"..--..",
-    "'":".----.",
     "!":"-.-.--",
-    "/":"-..-.",
-    "(":"-.--.",
-    ")":"-.--.-",
-    "&":".-...",
-    ":":"---...",
-    ";":"-.-.-.",
-    "=":"-...-",
-    "+":"._._.",
-    "-":"-....-",
-    "_":"..--.-",
-    "\"":".-..-.",
-    "$":"...-..-",
     "@":".--.-.",
+    "$":"...-..-",
+    "&":".-...",
+    "+":".-.-.",
 
     " ":"/"
 };
 
+/* Reverse Dictionary */
+
 const reverseMorse = {};
 
 for(let key in morseCode){
+
     reverseMorse[morseCode[key]] = key;
 }
 
+/* Text To Morse */
+
 function convertToMorse(){
 
-    const text = document.getElementById("textInput").value.toUpperCase();
+    const text =
+    document.getElementById("textInput")
+    .value
+    .toUpperCase();
 
     let result = "";
 
     for(let char of text){
 
         if(morseCode[char]){
-            result += morseCode[char] + " ";
+
+            result +=
+            morseCode[char] + " ";
         }
     }
 
-    document.getElementById("output").innerText = result;
+    document.getElementById("output")
+    .innerText = result;
 }
+
+/* Morse To Text */
 
 function convertToText(){
 
-    const morse = document.getElementById("morseInput").value.trim();
+    const morse =
+    document.getElementById("morseInput")
+    .value
+    .trim();
 
     const words = morse.split(" ");
 
@@ -160,32 +529,45 @@ function convertToText(){
     for(let code of words){
 
         if(reverseMorse[code]){
+
             result += reverseMorse[code];
         }
     }
 
-    document.getElementById("decoded").innerText = result;
+    document.getElementById("decoded")
+    .innerText = result;
 }
+
+/* Copy */
 
 function copyOutput(){
 
-    const text = document.getElementById("output").innerText;
+    const text =
+    document.getElementById("output")
+    .innerText;
 
     navigator.clipboard.writeText(text);
 
     alert("Copied Successfully!");
 }
 
+/* Clear */
+
 function clearAll(){
 
     document.getElementById("textInput").value = "";
     document.getElementById("morseInput").value = "";
 
-    document.getElementById("output").innerText =
+    document.getElementById("output")
+    .innerText =
     "Morse code will appear here...";
 
-    document.getElementById("decoded").innerText =
+    document.getElementById("decoded")
+    .innerText =
     "Decoded text will appear here...";
 }
 
 </script>
+
+</body>
+</html>
