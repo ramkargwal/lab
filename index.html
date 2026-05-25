@@ -1,293 +1,644 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Traffic Racer Game</title>
-    <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-            background-color: #0d0d0f;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        #ui {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            color: #fff;
-            font-size: 24px;
-            font-weight: bold;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-            pointer-events: none;
-            z-index: 10;
-        }
-        #score-val, #speed-val {
-            color: #c0ff47; /* Electric Lime accent color */
-        }
-        #game-over-screen {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: #fff;
-            text-align: center;
-            background: rgba(29, 28, 38, 0.85);
-            padding: 30px 50px;
-            border-radius: 16px;
-            border: 2px solid #9747ff;
-            display: none;
-            z-index: 20;
-        }
-        #restart-btn {
-            background-color: #c0ff47;
-            color: #000;
-            border: none;
-            padding: 12px 30px;
-            font-size: 18px;
-            font-weight: bold;
-            border-radius: 25px;
-            cursor: pointer;
-            margin-top: 15px;
-            transition: transform 0.2s;
-        }
-        #restart-btn:hover {
-            transform: scale(1.05);
-        }
-    </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Morse Code Studio</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+:root{
+    --bg1:#0f172a;
+    --bg2:#111827;
+    --glass:rgba(255,255,255,0.08);
+    --border:rgba(255,255,255,0.12);
+
+    --primary:#7c3aed;
+    --primary2:#06b6d4;
+    --light:#e0e7ff;
+
+    --text:#f8fafc;
+    --muted:#cbd5e1;
+
+    --shadow:0 10px 40px rgba(0,0,0,0.45);
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:'Poppins',sans-serif;
+    min-height:100vh;
+    overflow-x:hidden;
+    background:
+        radial-gradient(circle at top left,#312e81 0%,transparent 30%),
+        radial-gradient(circle at bottom right,#0e7490 0%,transparent 30%),
+        linear-gradient(135deg,var(--bg1),var(--bg2));
+
+    color:var(--text);
+}
+
+/* Animated Background */
+
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+
+    background-size:40px 40px;
+    animation:bgMove 15s linear infinite;
+    pointer-events:none;
+}
+
+@keyframes bgMove{
+    0%{
+        transform:translateY(0px);
+    }
+    100%{
+        transform:translateY(40px);
+    }
+}
+
+/* Floating Blur */
+
+.blur{
+    position:fixed;
+    border-radius:50%;
+    filter:blur(90px);
+    z-index:-1;
+    opacity:0.5;
+}
+
+.blur1{
+    width:300px;
+    height:300px;
+    background:#7c3aed;
+    top:-100px;
+    left:-100px;
+}
+
+.blur2{
+    width:300px;
+    height:300px;
+    background:#06b6d4;
+    bottom:-120px;
+    right:-100px;
+}
+
+/* Header */
+
+header{
+    width:100%;
+    padding:30px 8%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+
+.logo-circle{
+    width:60px;
+    height:60px;
+    border-radius:20px;
+    background:linear-gradient(135deg,var(--primary),var(--primary2));
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:28px;
+    box-shadow:0 0 25px rgba(124,58,237,0.6);
+    animation:pulse 3s infinite;
+}
+
+@keyframes pulse{
+    0%{
+        box-shadow:0 0 10px rgba(124,58,237,0.4);
+    }
+    50%{
+        box-shadow:0 0 35px rgba(6,182,212,0.8);
+    }
+    100%{
+        box-shadow:0 0 10px rgba(124,58,237,0.4);
+    }
+}
+
+.logo h1{
+    font-size:32px;
+    font-weight:700;
+    background:linear-gradient(to right,#fff,#c4b5fd,#67e8f9);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+
+/* Main */
+
+.container{
+    width:100%;
+    padding:20px 8% 80px;
+}
+
+.hero{
+    text-align:center;
+    margin-bottom:50px;
+}
+
+.hero h2{
+    font-size:60px;
+    line-height:1.1;
+    margin-bottom:20px;
+    background:linear-gradient(to right,#ffffff,#a5b4fc,#67e8f9);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+
+.hero p{
+    max-width:800px;
+    margin:auto;
+    color:var(--muted);
+    font-size:18px;
+    line-height:1.8;
+}
+
+/* Glass Card */
+
+.card{
+    background:var(--glass);
+    border:1px solid var(--border);
+    backdrop-filter:blur(15px);
+    border-radius:35px;
+    padding:35px;
+    box-shadow:var(--shadow);
+    margin-bottom:35px;
+    position:relative;
+    overflow:hidden;
+}
+
+.card::before{
+    content:"";
+    position:absolute;
+    width:300px;
+    height:300px;
+    background:radial-gradient(circle,rgba(255,255,255,0.08),transparent);
+    top:-150px;
+    right:-100px;
+}
+
+.section-title{
+    font-size:28px;
+    margin-bottom:25px;
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+
+/* Textarea */
+
+textarea{
+    width:100%;
+    min-height:180px;
+    resize:vertical;
+    border:none;
+    outline:none;
+    padding:25px;
+    border-radius:25px;
+    background:rgba(0,0,0,0.25);
+    color:white;
+    font-size:18px;
+    line-height:1.7;
+    border:1px solid rgba(255,255,255,0.1);
+    transition:0.3s;
+}
+
+textarea:focus{
+    border:1px solid #67e8f9;
+    box-shadow:0 0 20px rgba(6,182,212,0.4);
+}
+
+textarea::placeholder{
+    color:#94a3b8;
+}
+
+/* Buttons */
+
+.buttons{
+    margin-top:25px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:20px;
+}
+
+button{
+    padding:16px 28px;
+    border:none;
+    border-radius:18px;
+    font-size:16px;
+    font-weight:600;
+    cursor:pointer;
+    transition:0.35s;
+    color:white;
+    position:relative;
+    overflow:hidden;
+}
+
+button::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(135deg,rgba(255,255,255,0.15),transparent);
+}
+
+.btn-primary{
+    background:linear-gradient(135deg,var(--primary),#4f46e5);
+}
+
+.btn-secondary{
+    background:linear-gradient(135deg,var(--primary2),#0891b2);
+}
+
+.btn-dark{
+    background:linear-gradient(135deg,#1e293b,#0f172a);
+}
+
+button:hover{
+    transform:translateY(-4px) scale(1.03);
+    box-shadow:0 10px 30px rgba(0,0,0,0.35);
+}
+
+/* Morse Display */
+
+.output{
+    margin-top:25px;
+    min-height:140px;
+    border-radius:25px;
+    padding:25px;
+    background:rgba(0,0,0,0.25);
+    border:1px solid rgba(255,255,255,0.08);
+    color:#67e8f9;
+    font-size:22px;
+    line-height:1.8;
+    word-break:break-word;
+}
+
+/* Grid */
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:25px;
+}
+
+/* Mini Card */
+
+.mini{
+    padding:25px;
+    border-radius:25px;
+    background:rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.08);
+    transition:0.35s;
+}
+
+.mini:hover{
+    transform:translateY(-8px);
+    background:rgba(255,255,255,0.08);
+}
+
+.mini h3{
+    margin-bottom:15px;
+    font-size:22px;
+}
+
+.mini p{
+    color:var(--muted);
+    line-height:1.8;
+}
+
+/* Morse Table */
+
+.table-wrap{
+    overflow:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:20px;
+}
+
+th{
+    background:linear-gradient(135deg,var(--primary),var(--primary2));
+    padding:18px;
+    text-align:left;
+    font-size:18px;
+}
+
+td{
+    padding:16px;
+    border-bottom:1px solid rgba(255,255,255,0.08);
+}
+
+tr:hover{
+    background:rgba(255,255,255,0.05);
+}
+
+/* Footer */
+
+footer{
+    text-align:center;
+    padding:40px;
+    color:#94a3b8;
+}
+
+/* Responsive */
+
+@media(max-width:768px){
+
+    .hero h2{
+        font-size:42px;
+    }
+
+    .logo h1{
+        font-size:24px;
+    }
+
+    header{
+        flex-direction:column;
+        gap:20px;
+    }
+
+    .buttons{
+        flex-direction:column;
+    }
+
+    button{
+        width:100%;
+    }
+}
+
+</style>
 </head>
+
 <body>
 
-    <div id="ui">
-        <div>Score: <span id="score-val">0</span></div>
-        <div style="font-size: 16px; margin-top: 5px;">Speed: <span id="speed-val">100</span> km/h</div>
+<div class="blur blur1"></div>
+<div class="blur blur2"></div>
+
+<header>
+
+    <div class="logo">
+        <div class="logo-circle">• −</div>
+        <h1>Morse Studio</h1>
     </div>
 
-    <div id="game-over-screen">
-        <h1 style="color: #ff9c9c; margin: 0 0 10px 0;">CRASH!</h1>
-        <p style="font-size: 18px; margin: 0;">Your Final Score: <span id="final-score" style="color:#c0ff47; font-weight:bold;">0</span></p>
-        <button id="restart-btn" onclick="resetGame()">Play Again</button>
+</header>
+
+<div class="container">
+
+    <section class="hero">
+        <h2>Beautiful Morse Code Converter</h2>
+
+        <p>
+            Convert normal text into Morse code and decode Morse code back into text 
+            with this modern futuristic Morse Code Studio.
+        </p>
+    </section>
+
+    <!-- Encoder -->
+
+    <div class="card">
+
+        <h2 class="section-title">⚡ Text to Morse</h2>
+
+        <textarea id="textInput" placeholder="Type your message here..."></textarea>
+
+        <div class="buttons">
+            <button class="btn-primary" onclick="convertToMorse()">
+                Convert to Morse
+            </button>
+
+            <button class="btn-secondary" onclick="copyOutput()">
+                Copy Output
+            </button>
+
+            <button class="btn-dark" onclick="clearAll()">
+                Clear
+            </button>
+        </div>
+
+        <div class="output" id="output">
+            Morse code will appear here...
+        </div>
+
     </div>
 
-    <script>
-        // --- Game Variables & Setup ---
-        let scene, camera, renderer;
-        let playerCar;
-        let road, roadGeom;
-        let trafficCars = [];
-        let keys = { ArrowLeft: false, ArrowRight: false, KeyA: false, KeyD: false };
-        
-        let gameActive = true;
-        let score = 0;
-        let gameSpeed = 0.8; // Initial movement speed
-        const laneWidth = 3.5;
-        const totalLanes = 3;
-        const roadLength = 300;
+    <!-- Decoder -->
 
-        // Colors
-        const playerColor = 0x9747ff; // Purple
-        const trafficColors = [0xff9c9c, 0xffc850, 0x0094c7, 0xffffff]; // Red, Yellow, Blue, White
+    <div class="card">
 
-        init();
-        animate();
+        <h2 class="section-title">🔊 Morse to Text</h2>
 
-        function init() {
-            // 1. Scene Creation
-            scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x0a0a0f);
-            scene.fog = new THREE.FogExp2(0x0a0a0f, 0.015);
+        <textarea id="morseInput" placeholder="Enter Morse code here..."></textarea>
 
-            // 2. Camera Setup
-            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-            // Position camera behind and above the car (Third-person view)
-            camera.position.set(0, 4, 8);
-            camera.lookAt(0, 1, -10);
+        <div class="buttons">
+            <button class="btn-primary" onclick="convertToText()">
+                Decode Morse
+            </button>
+        </div>
 
-            // 3. Renderer Setup
-            renderer = new THREE.WebGLRenderer({ antialias: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            document.body.appendChild(renderer.domElement);
+        <div class="output" id="decoded">
+            Decoded text will appear here...
+        </div>
 
-            // 4. Lighting
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-            scene.add(ambientLight);
+    </div>
 
-            const dirLight = new THREE.DirectionLight(0xffffff, 0.8);
-            dirLight.position.set(10, 20, 10);
-            scene.add(dirLight);
+    <!-- Features -->
 
-            // 5. Build Road Segment
-            createRoad();
+    <div class="grid">
 
-            // 6. Spawn Player Car
-            createPlayerCar();
+        <div class="mini">
+            <h3>🚀 Fast Conversion</h3>
+            <p>
+                Instantly convert text into Morse code with smooth animations and modern UI.
+            </p>
+        </div>
 
-            // 7. Input Event Listeners
-            window.addEventListener('keydown', (e) => { if(e.code in keys) keys[e.code] = true; });
-            window.addEventListener('keyup', (e) => { if(e.code in keys) keys[e.code] = false; });
-            window.addEventListener('resize', onWindowResize);
+        <div class="mini">
+            <h3>🎨 Futuristic Design</h3>
+            <p>
+                Beautiful glassmorphism style with glowing gradients and responsive layout.
+            </p>
+        </div>
+
+        <div class="mini">
+            <h3>📱 Fully Responsive</h3>
+            <p>
+                Works perfectly on desktop, mobile, tablet, and all modern browsers.
+            </p>
+        </div>
+
+    </div>
+
+    <!-- Morse Table -->
+
+    <div class="card">
+
+        <h2 class="section-title">📚 Morse Code Reference</h2>
+
+        <div class="table-wrap">
+
+            <table>
+
+                <tr>
+                    <th>Letter</th>
+                    <th>Morse</th>
+                    <th>Letter</th>
+                    <th>Morse</th>
+                </tr>
+
+                <tr><td>A</td><td>.-</td><td>N</td><td>-.</td></tr>
+                <tr><td>B</td><td>-...</td><td>O</td><td>---</td></tr>
+                <tr><td>C</td><td>-.-.</td><td>P</td><td>.--.</td></tr>
+                <tr><td>D</td><td>-..</td><td>Q</td><td>--.-</td></tr>
+                <tr><td>E</td><td>.</td><td>R</td><td>.-.</td></tr>
+                <tr><td>F</td><td>..-.</td><td>S</td><td>...</td></tr>
+                <tr><td>G</td><td>--.</td><td>T</td><td>-</td></tr>
+                <tr><td>H</td><td>....</td><td>U</td><td>..-</td></tr>
+                <tr><td>I</td><td>..</td><td>V</td><td>...-</td></tr>
+                <tr><td>J</td><td>.---</td><td>W</td><td>.--</td></tr>
+                <tr><td>K</td><td>-.-</td><td>X</td><td>-..-</td></tr>
+                <tr><td>L</td><td>.-..</td><td>Y</td><td>-.--</td></tr>
+                <tr><td>M</td><td>--</td><td>Z</td><td>--..</td></tr>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+<footer>
+    Made with ❤️ | Morse Studio
+</footer>
+
+<script>
+
+const morseCode = {
+
+    A: ".-",
+    B: "-...",
+    C: "-.-.",
+    D: "-..",
+    E: ".",
+    F: "..-.",
+    G: "--.",
+    H: "....",
+    I: "..",
+    J: ".---",
+    K: "-.-",
+    L: ".-..",
+    M: "--",
+    N: "-.",
+    O: "---",
+    P: ".--.",
+    Q: "--.-",
+    R: ".-.",
+    S: "...",
+    T: "-",
+    U: "..-",
+    V: "...-",
+    W: ".--",
+    X: "-..-",
+    Y: "-.--",
+    Z: "--..",
+
+    0:"-----",
+    1:".----",
+    2:"..---",
+    3:"...--",
+    4:"....-",
+    5:".....",
+    6:"-....",
+    7:"--...",
+    8:"---..",
+    9:"----.",
+
+    " ":"/"
+};
+
+const reverseMorse = {};
+
+for(let key in morseCode){
+    reverseMorse[morseCode[key]] = key;
+}
+
+function convertToMorse(){
+
+    const text = document.getElementById("textInput").value.toUpperCase();
+
+    let result = "";
+
+    for(let char of text){
+
+        if(morseCode[char]){
+            result += morseCode[char] + " ";
         }
+    }
 
-        // --- Procedural Generation Functions ---
-        function createRoad() {
-            const roadWidth = laneWidth * totalLanes;
-            roadGeom = new THREE.PlaneGeometry(roadWidth, roadLength);
-            const roadMat = new THREE.MeshStandardMaterial({ 
-                color: 0x1d1d21, 
-                roughness: 0.8 
-            });
-            road = new THREE.Mesh(roadGeom, roadMat);
-            road.rotation.x = -Math.PI / 2; // Lay flat
-            road.position.set(0, 0, -roadLength / 4);
-            scene.add(road);
+    document.getElementById("output").innerText = result;
+}
 
-            // Adding Simple Lane Markings
-            const lineGeom = new THREE.PlaneGeometry(0.1, roadLength);
-            const lineMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
-            
-            for (let i = 1; i < totalLanes; i++) {
-                let posX = -roadWidth/2 + (i * laneWidth);
-                let leftLine = new THREE.Mesh(lineGeom, lineMat);
-                leftLine.rotation.x = -Math.PI / 2;
-                leftLine.position.set(posX, 0.01, -roadLength / 4);
-                scene.add(leftLine);
-            }
+function convertToText(){
+
+    const morse = document.getElementById("morseInput").value.trim();
+
+    const words = morse.split(" ");
+
+    let result = "";
+
+    for(let code of words){
+
+        if(reverseMorse[code]){
+            result += reverseMorse[code];
         }
+    }
 
-        function createPlayerCar() {
-            // Composite object for the car
-            playerCar = new THREE.Group();
+    document.getElementById("decoded").innerText = result;
+}
 
-            // Car Body
-            const bodyGeom = new THREE.BoxGeometry(1.6, 0.6, 3);
-            const bodyMat = new THREE.MeshStandardMaterial({ color: playerColor, roughness: 0.2 });
-            const body = new THREE.Mesh(bodyGeom, bodyMat);
-            body.position.y = 0.4;
-            playerCar.add(body);
+function copyOutput(){
 
-            // Car Cabin (Glass area)
-            const cabinGeom = new THREE.BoxGeometry(1.3, 0.5, 1.4);
-            const cabinMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.1 });
-            const cabin = new THREE.Mesh(cabinGeom, cabinMat);
-            cabin.position.set(0, 0.85, -0.2);
-            playerCar.add(cabin);
+    const text = document.getElementById("output").innerText;
 
-            // Initial Position
-            playerCar.position.set(0, 0, 0);
-            scene.add(playerCar);
-        }
+    navigator.clipboard.writeText(text);
 
-        function spawnTrafficCar() {
-            if (trafficCars.length > 8) return; // Cap maximum vehicles on screen
+    alert("Copied Successfully!");
+}
 
-            const trafficGroup = new THREE.Group();
-            
-            // Randomly select a target lane (-3.5, 0, or 3.5)
-            const randomLaneIndex = Math.floor(Math.random() * totalLanes);
-            const posX = -laneWidth + (randomLaneIndex * laneWidth);
-            
-            // Avoid spawning immediately on top of another vehicle in the same lane
-            const startZ = -120 - Math.random() * 40;
-            for(let car of trafficCars) {
-                if(car.position.x === posX && Math.abs(car.position.z - startZ) < 15) {
-                    return; // Abort spawn to prevent overlaps
-                }
-            }
+function clearAll(){
 
-            // Design Traffic Car
-            const bodyGeom = new THREE.BoxGeometry(1.6, 0.6, 3);
-            const randomColor = trafficColors[Math.floor(Math.random() * trafficColors.length)];
-            const bodyMat = new THREE.MeshStandardMaterial({ color: randomColor, roughness: 0.4 });
-            const body = new THREE.Mesh(bodyGeom, bodyMat);
-            body.position.y = 0.4;
-            trafficGroup.add(body);
+    document.getElementById("textInput").value = "";
+    document.getElementById("morseInput").value = "";
 
-            trafficGroup.position.set(posX, 0, startZ);
-            scene.add(trafficGroup);
-            trafficCars.push(trafficGroup);
-        }
+    document.getElementById("output").innerText =
+    "Morse code will appear here...";
 
-        // --- Game Loop & Logic ---
-        function animate() {
-            requestAnimationFrame(animate);
+    document.getElementById("decoded").innerText =
+    "Decoded text will appear here...";
+}
 
-            if (gameActive) {
-                // 1. Handle Input & Player Bounds
-                if (keys.ArrowLeft || keys.KeyA) playerCar.position.x -= 0.12;
-                if (keys.ArrowRight || keys.KeyD) playerCar.position.x += 0.12;
+</script>
 
-                // Enforce road edges boundaries
-                const maxDrift = (laneWidth * totalLanes / 2) - 0.8;
-                if (playerCar.position.x < -maxDrift) playerCar.position.x = -maxDrift;
-                if (playerCar.position.x > maxDrift) playerCar.position.x = maxDrift;
-
-                // 2. Drive & Process Traffic Environment
-                if (Math.random() < 0.03) {
-                    spawnTrafficCar();
-                }
-
-                for (let i = trafficCars.length - 1; i >= 0; i--) {
-                    let tCar = trafficCars[i];
-                    // Traffic moves slower than the player creating relative forward motion
-                    tCar.position.z += gameSpeed * 0.45; 
-
-                    // Check for Collisions (Bounding Box approximation)
-                    if (Math.abs(playerCar.position.x - tCar.position.x) < 1.4 &&
-                        Math.abs(playerCar.position.z - tCar.position.z) < 2.8) {
-                        endGame();
-                    }
-
-                    // Remove out of bound vehicles behind player
-                    if (tCar.position.z > 15) {
-                        scene.remove(tCar);
-                        trafficCars.splice(i, 1);
-                        score += 10; // Earn points for clean passes
-                    }
-                }
-
-                // 3. Dynamic Progression
-                score += 1;
-                gameSpeed += 0.0001; // Scale up difficulty gradually
-                
-                // Keep the endless road texture illusion aligned
-                road.position.z = (playerCar.position.z) - 50;
-
-                // Update UI Layout
-                document.getElementById('score-val').innerText = Math.floor(score);
-                document.getElementById('speed-val').innerText = Math.floor(gameSpeed * 180);
-            }
-
-            renderer.render(scene, camera);
-        }
-
-        // --- State Management ---
-        function endGame() {
-            gameActive = false;
-            document.getElementById('final-score').innerText = Math.floor(score);
-            document.getElementById('game-over-screen').style.display = 'block';
-        }
-
-        function resetGame() {
-            // Clean active traffic
-            for (let car of trafficCars) {
-                scene.remove(car);
-            }
-            trafficCars = [];
-
-            // Reset States
-            playerCar.position.set(0, 0, 0);
-            score = 0;
-            gameSpeed = 0.8;
-            gameActive = true;
-            document.getElementById('game-over-screen').style.display = 'none';
-        }
-
-        function onWindowResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        }
-    </script>
 </body>
 </html>
