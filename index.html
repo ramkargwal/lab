@@ -3,113 +3,291 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sudarshan Kumar | Portfolio</title>
-    <!-- Tailwind CSS for Modern Styling -->
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <!-- FontAwesome for Premium Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>3D Traffic Racer Game</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #0d0d0f;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        #ui {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: #fff;
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            pointer-events: none;
+            z-index: 10;
+        }
+        #score-val, #speed-val {
+            color: #c0ff47; /* Electric Lime accent color */
+        }
+        #game-over-screen {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #fff;
+            text-align: center;
+            background: rgba(29, 28, 38, 0.85);
+            padding: 30px 50px;
+            border-radius: 16px;
+            border: 2px solid #9747ff;
+            display: none;
+            z-index: 20;
+        }
+        #restart-btn {
+            background-color: #c0ff47;
+            color: #000;
+            border: none;
+            padding: 12px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 25px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: transform 0.2s;
+        }
+        #restart-btn:hover {
+            transform: scale(1.05);
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
-<body class="bg-gray-950 text-gray-100 font-sans selection:bg-indigo-500 selection:text-white">
+<body>
 
-    <!-- Top Glow Effect -->
-    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[300px] bg-gradient-to-b from-indigo-600/10 to-transparent blur-3xl pointer-events-none"></div>
+    <div id="ui">
+        <div>Score: <span id="score-val">0</span></div>
+        <div style="font-size: 16px; margin-top: 5px;">Speed: <span id="speed-val">100</span> km/h</div>
+    </div>
 
-    <!-- Header / Navbar -->
-    <header class="sticky top-0 z-50 bg-gray-950/80 backdrop-blur-md border-b border-gray-900 px-6 py-4">
-        <div class="max-w-5xl mx-auto flex justify-between items-center">
-            <div class="flex items-center space-x-2">
-                <div class="w-3 h-3 bg-indigo-500 rounded-full animate-pulse"></div>
-                <span class="text-sm font-mono tracking-widest text-gray-400">SUDARSHAN.DEV</span>
-            </div>
-            <a href="#contact" class="text-xs font-bold uppercase tracking-wider bg-gray-900 border border-gray-800 hover:border-indigo-500/50 px-4 py-2 rounded-xl transition-all">
-                Get In Touch
-            </a>
-        </div>
-    </header>
+    <div id="game-over-screen">
+        <h1 style="color: #ff9c9c; margin: 0 0 10px 0;">CRASH!</h1>
+        <p style="font-size: 18px; margin: 0;">Your Final Score: <span id="final-score" style="color:#c0ff47; font-weight:bold;">0</span></p>
+        <button id="restart-btn" onclick="resetGame()">Play Again</button>
+    </div>
 
-    <!-- Main Content Container -->
-    <main class="max-w-3xl mx-auto px-6 py-16 space-y-20 relative">
+    <script>
+        // --- Game Variables & Setup ---
+        let scene, camera, renderer;
+        let playerCar;
+        let road, roadGeom;
+        let trafficCars = [];
+        let keys = { ArrowLeft: false, ArrowRight: false, KeyA: false, KeyD: false };
+        
+        let gameActive = true;
+        let score = 0;
+        let gameSpeed = 0.8; // Initial movement speed
+        const laneWidth = 3.5;
+        const totalLanes = 3;
+        const roadLength = 300;
 
-        <!-- Hero Section -->
-        <section class="space-y-6">
-            <div class="inline-flex items-center space-x-2 bg-indigo-950/50 border border-indigo-500/30 px-3 py-1 rounded-full">
-                <i class="fa-solid fa-microchip text-xs text-indigo-400"></i>
-                <span class="text-[11px] font-medium tracking-wider uppercase text-indigo-300">Vocational Instructor & Developer</span>
-            </div>
-            <h1 class="text-4xl sm:text-5xl font-black tracking-tight text-white leading-none">
-                Bridging the gap between <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">Hardware & Software</span>.
-            </h1>
-            <p class="text-gray-400 leading-relaxed text-base max-w-2xl">
-                I build clean frontend interfaces, design custom firmware routines for microcontrollers, and experiment with practical lab automation. Focused on building robust, real-world logic.
-            </p>
-        </section>
+        // Colors
+        const playerColor = 0x9747ff; // Purple
+        const trafficColors = [0xff9c9c, 0xffc850, 0x0094c7, 0xffffff]; // Red, Yellow, Blue, White
 
-        <!-- Skill Matrix -->
-        <section class="space-y-6">
-            <h2 class="text-xs font-bold uppercase tracking-widest text-gray-500 flex items-center space-x-2">
-                <span>/ Technical Skillset</span>
-            </h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <!-- Software Block -->
-                <div class="bg-gray-900/40 border border-gray-900 rounded-2xl p-5 hover:border-gray-800 transition-colors">
-                    <div class="text-indigo-400 mb-3 text-lg"><i class="fa-solid fa-code"></i></div>
-                    <h3 class="text-sm font-bold text-white mb-2">Software & Web</h3>
-                    <p class="text-xs text-gray-400 leading-relaxed">C, C++, Python, HTML5, Tailwind CSS, JavaScript, and Progressive Web Apps (PWA).</p>
-                </div>
-                <!-- Hardware Block -->
-                <div class="bg-gray-900/40 border border-gray-900 rounded-2xl p-5 hover:border-gray-800 transition-colors">
-                    <div class="text-purple-400 mb-3 text-lg"><i class="fa-solid fa-gear"></i></div>
-                    <h3 class="text-sm font-bold text-white mb-2">Electronics & IoT</h3>
-                    <p class="text-xs text-gray-400 leading-relaxed">Arduino IDE, Raspberry Pi Pico, Automation Firmware, and Custom Expansion Shields.</p>
-                </div>
-            </div>
-        </section>
+        init();
+        animate();
 
-        <!-- Featured Projects / Lab Experiments -->
-        <section class="space-y-6">
-            <h2 class="text-xs font-bold uppercase tracking-widest text-gray-500">
-                <span>/ Lab Workspace & Projects</span>
-            </h2>
-            <div class="space-y-4">
-                <!-- Project 1 -->
-                <div class="group bg-gray-900/20 border border-gray-900 hover:bg-gray-900/40 rounded-2xl p-5 flex justify-between items-start transition-all">
-                    <div class="space-y-2">
-                        <span class="text-[10px] font-mono uppercase tracking-wider text-indigo-400">Optics & Physics</span>
-                        <h3 class="text-base font-bold text-white group-hover:text-indigo-300 transition-colors">Laser Diffraction Measurement Setup</h3>
-                        <p class="text-xs text-gray-400 max-w-xl">Using standard calibrated laser optics to mathematically capture and analyze micro-structural dimensions through diffraction patterns.</p>
-                    </div>
-                    <div class="text-gray-600 group-hover:text-gray-400 transition-colors pt-1"><i class="fa-solid fa-arrow-up-right-from-square text-xs"></i></div>
-                </div>
-                <!-- Project 2 -->
-                <div class="group bg-gray-900/20 border border-gray-900 hover:bg-gray-900/40 rounded-2xl p-5 flex justify-between items-start transition-all">
-                    <div class="space-y-2">
-                        <span class="text-[10px] font-mono uppercase tracking-wider text-purple-400">Micro-Computing</span>
-                        <h3 class="text-base font-bold text-white group-hover:text-purple-300 transition-colors">Automated Hardware Data-Logger</h3>
-                        <p class="text-xs text-gray-400 max-w-xl">Custom firmware built for Raspberry Pi Pico and Arduino architectures to stream real-time environmental data parameters directly to local storage.</p>
-                    </div>
-                    <div class="text-gray-600 group-hover:text-gray-400 transition-colors pt-1"><i class="fa-solid fa-arrow-up-right-from-square text-xs"></i></div>
-                </div>
-            </div>
-        </section>
+        function init() {
+            // 1. Scene Creation
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x0a0a0f);
+            scene.fog = new THREE.FogExp2(0x0a0a0f, 0.015);
 
-        <!-- Contact Section -->
-        <section id="contact" class="bg-gradient-to-r from-gray-900 to-indigo-950/30 border border-gray-900 rounded-3xl p-8 space-y-4 text-center">
-            <h2 class="text-xl font-bold text-white">Let's collaborate on code or hardware</h2>
-            <p class="text-xs text-gray-400 max-w-md mx-auto">Available for technical discussions, educational framework consulting, or hardware-software integration projects.</p>
-            <div class="pt-2">
-                <a href="mailto:your-email@example.com" class="inline-flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-6 py-3 rounded-xl transition-colors shadow-lg shadow-indigo-600/10">
-                    <i class="fa-regular fa-envelope"></i>
-                    <span>Send an Email</span>
-                </a>
-            </div>
-        </section>
+            // 2. Camera Setup
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+            // Position camera behind and above the car (Third-person view)
+            camera.position.set(0, 4, 8);
+            camera.lookAt(0, 1, -10);
 
-    </main>
+            // 3. Renderer Setup
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
 
-    <!-- Footer -->
-    <footer class="border-t border-gray-900 py-8 text-center text-xs text-gray-600 font-mono">
-        &copy; 2026 Sudarshan Kumar. Built with clean HTML & Tailwind.
-    </footer>
+            // 4. Lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
 
+            const dirLight = new THREE.DirectionLight(0xffffff, 0.8);
+            dirLight.position.set(10, 20, 10);
+            scene.add(dirLight);
+
+            // 5. Build Road Segment
+            createRoad();
+
+            // 6. Spawn Player Car
+            createPlayerCar();
+
+            // 7. Input Event Listeners
+            window.addEventListener('keydown', (e) => { if(e.code in keys) keys[e.code] = true; });
+            window.addEventListener('keyup', (e) => { if(e.code in keys) keys[e.code] = false; });
+            window.addEventListener('resize', onWindowResize);
+        }
+
+        // --- Procedural Generation Functions ---
+        function createRoad() {
+            const roadWidth = laneWidth * totalLanes;
+            roadGeom = new THREE.PlaneGeometry(roadWidth, roadLength);
+            const roadMat = new THREE.MeshStandardMaterial({ 
+                color: 0x1d1d21, 
+                roughness: 0.8 
+            });
+            road = new THREE.Mesh(roadGeom, roadMat);
+            road.rotation.x = -Math.PI / 2; // Lay flat
+            road.position.set(0, 0, -roadLength / 4);
+            scene.add(road);
+
+            // Adding Simple Lane Markings
+            const lineGeom = new THREE.PlaneGeometry(0.1, roadLength);
+            const lineMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+            
+            for (let i = 1; i < totalLanes; i++) {
+                let posX = -roadWidth/2 + (i * laneWidth);
+                let leftLine = new THREE.Mesh(lineGeom, lineMat);
+                leftLine.rotation.x = -Math.PI / 2;
+                leftLine.position.set(posX, 0.01, -roadLength / 4);
+                scene.add(leftLine);
+            }
+        }
+
+        function createPlayerCar() {
+            // Composite object for the car
+            playerCar = new THREE.Group();
+
+            // Car Body
+            const bodyGeom = new THREE.BoxGeometry(1.6, 0.6, 3);
+            const bodyMat = new THREE.MeshStandardMaterial({ color: playerColor, roughness: 0.2 });
+            const body = new THREE.Mesh(bodyGeom, bodyMat);
+            body.position.y = 0.4;
+            playerCar.add(body);
+
+            // Car Cabin (Glass area)
+            const cabinGeom = new THREE.BoxGeometry(1.3, 0.5, 1.4);
+            const cabinMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.1 });
+            const cabin = new THREE.Mesh(cabinGeom, cabinMat);
+            cabin.position.set(0, 0.85, -0.2);
+            playerCar.add(cabin);
+
+            // Initial Position
+            playerCar.position.set(0, 0, 0);
+            scene.add(playerCar);
+        }
+
+        function spawnTrafficCar() {
+            if (trafficCars.length > 8) return; // Cap maximum vehicles on screen
+
+            const trafficGroup = new THREE.Group();
+            
+            // Randomly select a target lane (-3.5, 0, or 3.5)
+            const randomLaneIndex = Math.floor(Math.random() * totalLanes);
+            const posX = -laneWidth + (randomLaneIndex * laneWidth);
+            
+            // Avoid spawning immediately on top of another vehicle in the same lane
+            const startZ = -120 - Math.random() * 40;
+            for(let car of trafficCars) {
+                if(car.position.x === posX && Math.abs(car.position.z - startZ) < 15) {
+                    return; // Abort spawn to prevent overlaps
+                }
+            }
+
+            // Design Traffic Car
+            const bodyGeom = new THREE.BoxGeometry(1.6, 0.6, 3);
+            const randomColor = trafficColors[Math.floor(Math.random() * trafficColors.length)];
+            const bodyMat = new THREE.MeshStandardMaterial({ color: randomColor, roughness: 0.4 });
+            const body = new THREE.Mesh(bodyGeom, bodyMat);
+            body.position.y = 0.4;
+            trafficGroup.add(body);
+
+            trafficGroup.position.set(posX, 0, startZ);
+            scene.add(trafficGroup);
+            trafficCars.push(trafficGroup);
+        }
+
+        // --- Game Loop & Logic ---
+        function animate() {
+            requestAnimationFrame(animate);
+
+            if (gameActive) {
+                // 1. Handle Input & Player Bounds
+                if (keys.ArrowLeft || keys.KeyA) playerCar.position.x -= 0.12;
+                if (keys.ArrowRight || keys.KeyD) playerCar.position.x += 0.12;
+
+                // Enforce road edges boundaries
+                const maxDrift = (laneWidth * totalLanes / 2) - 0.8;
+                if (playerCar.position.x < -maxDrift) playerCar.position.x = -maxDrift;
+                if (playerCar.position.x > maxDrift) playerCar.position.x = maxDrift;
+
+                // 2. Drive & Process Traffic Environment
+                if (Math.random() < 0.03) {
+                    spawnTrafficCar();
+                }
+
+                for (let i = trafficCars.length - 1; i >= 0; i--) {
+                    let tCar = trafficCars[i];
+                    // Traffic moves slower than the player creating relative forward motion
+                    tCar.position.z += gameSpeed * 0.45; 
+
+                    // Check for Collisions (Bounding Box approximation)
+                    if (Math.abs(playerCar.position.x - tCar.position.x) < 1.4 &&
+                        Math.abs(playerCar.position.z - tCar.position.z) < 2.8) {
+                        endGame();
+                    }
+
+                    // Remove out of bound vehicles behind player
+                    if (tCar.position.z > 15) {
+                        scene.remove(tCar);
+                        trafficCars.splice(i, 1);
+                        score += 10; // Earn points for clean passes
+                    }
+                }
+
+                // 3. Dynamic Progression
+                score += 1;
+                gameSpeed += 0.0001; // Scale up difficulty gradually
+                
+                // Keep the endless road texture illusion aligned
+                road.position.z = (playerCar.position.z) - 50;
+
+                // Update UI Layout
+                document.getElementById('score-val').innerText = Math.floor(score);
+                document.getElementById('speed-val').innerText = Math.floor(gameSpeed * 180);
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        // --- State Management ---
+        function endGame() {
+            gameActive = false;
+            document.getElementById('final-score').innerText = Math.floor(score);
+            document.getElementById('game-over-screen').style.display = 'block';
+        }
+
+        function resetGame() {
+            // Clean active traffic
+            for (let car of trafficCars) {
+                scene.remove(car);
+            }
+            trafficCars = [];
+
+            // Reset States
+            playerCar.position.set(0, 0, 0);
+            score = 0;
+            gameSpeed = 0.8;
+            gameActive = true;
+            document.getElementById('game-over-screen').style.display = 'none';
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+    </script>
 </body>
 </html>
