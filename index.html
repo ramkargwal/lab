@@ -1,4 +1,6 @@
-<!-- Morse Table -->
+<!-- ========================= -->
+<!-- COMPLETE MORSE TABLE -->
+<!-- ========================= -->
 
 <div class="card">
 
@@ -57,6 +59,10 @@
 
 </div>
 
+<!-- ========================= -->
+<!-- COMPLETE MORSE SCRIPT -->
+<!-- ========================= -->
+
 <script>
 
 const morseCode = {
@@ -111,14 +117,75 @@ const morseCode = {
     ":":"---...",
     ";":"-.-.-.",
     "=":"-...-",
-    "+":".-.-.",
+    "+":"._._.",
     "-":"-....-",
     "_":"..--.-",
-    "\"":"-..-.",
+    "\"":".-..-.",
     "$":"...-..-",
     "@":".--.-.",
 
     " ":"/"
 };
+
+const reverseMorse = {};
+
+for(let key in morseCode){
+    reverseMorse[morseCode[key]] = key;
+}
+
+function convertToMorse(){
+
+    const text = document.getElementById("textInput").value.toUpperCase();
+
+    let result = "";
+
+    for(let char of text){
+
+        if(morseCode[char]){
+            result += morseCode[char] + " ";
+        }
+    }
+
+    document.getElementById("output").innerText = result;
+}
+
+function convertToText(){
+
+    const morse = document.getElementById("morseInput").value.trim();
+
+    const words = morse.split(" ");
+
+    let result = "";
+
+    for(let code of words){
+
+        if(reverseMorse[code]){
+            result += reverseMorse[code];
+        }
+    }
+
+    document.getElementById("decoded").innerText = result;
+}
+
+function copyOutput(){
+
+    const text = document.getElementById("output").innerText;
+
+    navigator.clipboard.writeText(text);
+
+    alert("Copied Successfully!");
+}
+
+function clearAll(){
+
+    document.getElementById("textInput").value = "";
+    document.getElementById("morseInput").value = "";
+
+    document.getElementById("output").innerText =
+    "Morse code will appear here...";
+
+    document.getElementById("decoded").innerText =
+    "Decoded text will appear here...";
+}
 
 </script>
