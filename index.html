@@ -1,395 +1,235 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MegaPay - Premium Payment App</title>
+    <!-- Tailwind CSS for Modern UI -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Html5-QRCode Library for Camera Scanner -->
+    <script src="https://unpkg.com/html5-qrcode"></script>
 
-  <link rel="manifest" href="manifest.json">
-    <link rel="icon" type="image/png" href="ChatGPT Image May 25, 2026, 07_59_27 AM.png">
-
-    <title>मोर्स कोड गेम - राम रमन</title>
-
-    <style>
-        /* Modern Premium CSS Stylesheet */
-        * { 
-            box-sizing: border-box; 
-            margin: 0;
-            padding: 0;
+    <!-- PWA Capabilities (App Installation) -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('data:text/javascript;base64,Ly8gTWluaW1hbCBTZXJ2aWNlIFdvcmtlcgpzZWxmLmFkZEV2ZW50TGlzdGVuZXIoJ2ZldGNoJywgKGVhKSA9PiB7fSk7').then(reg => {
+                    console.log('PWA Service Worker Registered!');
+                }).catch(err => console.log('SW Registration Failed', err));
+            });
         }
 
-        body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: radial-gradient(circle at center, #222244 0%, #0f0f1a 100%);
-            color: #ffffff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            overflow: hidden;
-            perspective: 1000px;
-        }
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const installBtn = document.getElementById('installBtn');
+            if(installBtn) installBtn.classList.remove('hidden');
+        });
 
-        /* Animated Background Bubbles */
-        .bg-glow {
-            position: absolute;
-            width: 300px;
-            height: 300px;
-            background: linear-gradient(45deg, #00d2ff, #00d2ff);
-            filter: blur(120px);
-            opacity: 0.15;
-            border-radius: 50%;
-            top: 10%;
-            left: 10%;
-            animation: floatGlow 8s infinite alternate;
-            z-index: 1;
-        }
-
-        @keyframes floatGlow {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(50px, 50px) scale(1.2); }
-        }
-
-        /* Start Screen Overlay */
-        #start-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(15, 15, 26, 0.95);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-            backdrop-filter: blur(10px);
-            transition: all 0.5s ease;
-        }
-
-        h1.title {
-            font-size: 42px;
-            margin-bottom: 30px;
-            color: #f1c40f;
-            text-shadow: 0 0 20px rgba(241, 196, 15, 0.6);
-            font-weight: 800;
-            letter-spacing: 1px;
-            text-align: center;
-        }
-
-        .start-btn {
-            padding: 18px 55px;
-            font-size: 24px;
-            background: linear-gradient(135deg, #f1c40f 0%, #f39c12 100%);
-            color: #1a1a2e;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            font-weight: bold;
-            box-shadow: 0 10px 30px rgba(241, 196, 15, 0.4);
-            transform-style: preserve-3d;
-            transition: all 0.3s ease;
-        }
-
-        .start-btn:hover {
-            transform: scale(1.05) translateY(-3px);
-            box-shadow: 0 15px 35px rgba(241, 196, 15, 0.6);
-        }
-
-        .start-btn:active {
-            transform: scale(0.98) translateY(1px);
-        }
-
-        /* Main Game Container Card */
-        .game-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 35px 30px;
-            border-radius: 32px;
-            text-align: center;
-            width: 100%;
-            max-width: 420px;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-            display: none;
-            position: relative;
-            z-index: 10;
-            animation: fadeInCard 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        @keyframes fadeInCard {
-            0% { opacity: 0; transform: translateY(40px) scale(0.9); }
-            100% { opacity: 1; transform: translateY(0) scale(1); }
-        }
-
-        /* Score Board */
-        .score-board {
-            font-size: 20px;
-            margin-bottom: 25px;
-            color: #00d2ff;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            text-shadow: 0 0 10px rgba(0, 210, 255, 0.3);
-        }
-
-        /* Big Character Display */
-        .char-display {
-            background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
-            color: #1a1a2e;
-            width: 120px;
-            height: 120px;
-            line-height: 120px;
-            font-size: 70px;
-            border-radius: 28px;
-            margin: 0 auto 25px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3), 0 0 0 8px rgba(255, 255, 255, 0.05);
-            font-weight: 900;
-            transition: all 0.3s ease;
-        }
-
-        /* Buttons Grid Area */
-        .options-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 18px;
-            margin-top: 15px;
-        }
-
-        button.opt {
-            padding: 20px 10px;
-            font-size: 26px;
-            font-weight: bold;
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            border-radius: 18px;
-            background: rgba(255, 255, 255, 0.06);
-            color: white;
-            cursor: pointer;
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            font-family: 'Courier New', Courier, monospace;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-        }
-
-        button.opt:hover {
-            background: rgba(255, 255, 255, 0.15);
-            border-color: rgba(255, 255, 255, 0.3);
-            transform: translateY(-2px);
-        }
-
-        /* Game State Classes (Correct, Wrong, Highlight) */
-        .correct { 
-            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%) !important; 
-            border-color: #ffffff !important;
-            transform: scale(1.05) !important; 
-            color: white !important;
-            box-shadow: 0 10px 25px rgba(46, 204, 113, 0.5) !important;
-        }
-
-        .wrong { 
-            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%) !important; 
-            border-color: transparent !important;
-            transform: scale(0.95) !important; 
-            color: white !important;
-            box-shadow: 0 10px 25px rgba(231, 76, 60, 0.4) !important;
-        }
-
-        .show-right {
-            border: 3px solid #2ecc71 !important;
-            background: rgba(46, 204, 113, 0.2) !important;
-            animation: blinkRight 0.5s infinite alternate;
-        }
-
-        @keyframes blinkRight {
-            0% { rgba(46, 204, 113, 0.2); }
-            100% { rgba(46, 204, 113, 0.4); box-shadow: 0 0 15px rgba(46, 204, 113, 0.4); }
-        }
-
-        /* Win Modal Overlay */
-        #win-screen {
-            display: none;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #0f0f1a;
-            border-radius: 32px;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-            padding: 20px;
-        }
-
-        #win-screen p {
-            font-size: 18px;
-            margin: 15px 0 30px;
-            color: #ccc;
-        }
-
-        /* Status message text */
-        #msg {
-            margin-top: 20px;
-            font-size: 18px;
-            min-height: 24px;
-        }
-    </style>
-</head>
-
-<body>
-
-<div class="bg-glow"></div>
-
-<div id="start-overlay">
-    <h1 class="title">मोर्स कोड गेम</h1>
-    <button class="start-btn" onclick="startGame()">
-        शुरू करें (TAP)
-    </button>
-</div>
-
-<div class="game-card" id="main-game">
-
-    <div id="win-screen">
-        <h1 style="color: #f1c40f; font-size: 36px; text-shadow: 0 0 15px rgba(241,196,15,0.5);">
-            🏆 विजेता! 🏆
-        </h1>
-        <p>राम रमन, आपने गेम जीत लिया है!</p>
-        <button class="start-btn" onclick="location.reload()" style="font-size: 18px; padding: 12px 30px;">
-            फिर से खेलें
-        </button>
-    </div>
-
-    <div class="score-board">
-        स्कोर: <span id="score">0</span> / 10
-    </div>
-
-    <div class="char-display" id="char">?</div>
-
-    <p style="color: #aaa; font-size: 15px; margin-bottom: 5px;">सही कोड चुनें:</p>
-
-    <div class="options-grid" id="options"></div>
-
-    <p id="msg"></p>
-
-</div>
-
-<script>
-    // Morse Code Library Dataset
-    const morseCodes = {
-        'A': '.-', 'B': '-...', 'C': '-.-.', 'D': '-..', 'E': '.',
-        'F': '..-.', 'G': '--.', 'H': '....', 'I': '..', 'J': '.---',
-        'K': '-.-', 'L': '.-..', 'M': '--', 'N': '-.', 'O': '---',
-        'P': '.--.', 'Q': '--.-', 'R': '.-.', 'S': '...', 'T': '-',
-        'U': '..-', 'V': '...-', 'W': '.--', 'X': '-..-', 'Y': '-.--', 'Z': '--..'
-    };
-
-    let score = 0;
-    let currentKey = "";
-    let canClick = true;
-
-    // Hindi Text To Speech Voice System
-    function speakHindi(text) {
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel(); // Stop any ongoing speech
-            const utter = new SpeechSynthesisUtterance(text);
-            utter.lang = 'hi-IN';
-            utter.pitch = 1.0;
-            utter.rate = 1.0;
-            window.speechSynthesis.speak(utter);
-        }
-    }
-
-    // Trigger Game Start Session
-    function startGame() {
-        document.getElementById('start-overlay').style.opacity = '0';
-        setTimeout(() => {
-            document.getElementById('start-overlay').style.display = 'none';
-            document.getElementById('main-game').style.display = 'block';
-            speakHindi("राम रमन, आपका गेम में स्वागत है");
-            loadNewQuestion();
-        }, 400);
-    }
-
-    // Generate Question Logic Module
-    function loadNewQuestion() {
-        if (score >= 10) {
-            document.getElementById('win-screen').style.display = 'flex';
-            speakHindi("बधाई हो, राम रमन! आप जीत गए हैं।");
-            return;
-        }
-
-        canClick = true;
-        const keys = Object.keys(morseCodes);
-        currentKey = keys[Math.floor(Math.random() * keys.length)];
-        
-        document.getElementById('char').innerText = currentKey;
-        document.getElementById('msg').innerText = "";
-
-        const correct = morseCodes[currentKey];
-        let options = [correct];
-
-        while (options.length < 4) {
-            let rand = Object.values(morseCodes)[Math.floor(Math.random() * 26)];
-            if (!options.includes(rand)) {
-                options.push(rand);
+        function triggerInstall() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        document.getElementById('installBtn').classList.add('hidden');
+                    }
+                    deferredPrompt = null;
+                });
             }
         }
+    </script>
+</head>
+<body class="bg-gray-900 text-white font-sans antialiased selection:bg-indigo-500">
 
-        options.sort(() => Math.random() - 0.5);
-        const container = document.getElementById('options');
-        container.innerHTML = "";
+    <!-- Navbar -->
+    <nav class="bg-gray-800 border-b border-gray-700 sticky top-0 z-50 px-4 py-3 shadow-lg">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-indigo-600 p-2.5 rounded-xl shadow-md shadow-indigo-500/20">
+                    <i class="fa-solid fa-wallet text-xl text-white"></i>
+                </div>
+                <span class="text-xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">MEGAPAY</span>
+            </div>
+            <button id="installBtn" onclick="triggerInstall()" class="hidden bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 px-4 py-2 rounded-xl text-sm font-bold shadow-lg shadow-emerald-500/20 transition-all duration-200 transform active:scale-95">
+                <i class="fa-solid fa-download mr-1.5"></i> Install App
+            </button>
+        </div>
+    </nav>
 
-        options.forEach(opt => {
-            const btn = document.createElement('button');
-            btn.className = "opt";
-            btn.innerText = opt;
-            btn.dataset.code = opt;
-            btn.onclick = () => check(opt, btn);
-            container.appendChild(btn);
-        });
-    }
+    <!-- Main Container -->
+    <main class="max-w-md mx-auto px-4 py-6 mb-24">
 
-    // Checking Result Answer Verification System
-    function check(selected, btn) {
-        if (!canClick) return;
-        canClick = false;
+        <!-- Balance Card -->
+        <div class="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 p-6 rounded-3xl shadow-xl shadow-indigo-500/10 mb-8 relative overflow-hidden">
+            <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                    <p class="text-xs font-semibold tracking-widest text-indigo-100 uppercase">Total Available Balance</p>
+                    <h3 class="text-3xl font-black mt-1 text-white tracking-tight">₹48,250.00</h3>
+                </div>
+                <span class="bg-white/20 text-xs px-3 py-1 rounded-full font-medium backdrop-blur-sm">Primary Account</span>
+            </div>
+            <div class="flex justify-between items-center mt-6 pt-4 border-t border-white/10 text-sm text-indigo-100">
+                <div>
+                    <p class="text-[10px] uppercase text-indigo-200">Account Holder</p>
+                    <p class="font-bold">Sudarshan Kumar</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-[10px] uppercase text-indigo-200">UPI ID</p>
+                    <p class="font-bold">sudkumar@megapay</p>
+                </div>
+            </div>
+        </div>
 
-        const correctCode = morseCodes[currentKey];
+        <!-- Quick Actions Grid -->
+        <h2 class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-4 px-1">Quick Actions</h2>
+        <div class="grid grid-cols-4 gap-4 mb-8">
+            <button onclick="openScanner()" class="flex flex-col items-center group">
+                <div class="w-14 h-14 bg-gradient-to-tr from-indigo-500 to-purple-500 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-500/20 transition-transform group-active:scale-90">
+                    <i class="fa-solid fa-qrcode text-xl text-white"></i>
+                </div>
+                <span class="text-xs font-semibold mt-2 text-gray-300">Scan & Pay</span>
+            </button>
+            <button class="flex flex-col items-center group">
+                <div class="w-14 h-14 bg-gray-800 border border-gray-700 rounded-2xl flex items-center justify-center transition-transform group-active:scale-90 group-hover:border-gray-600">
+                    <i class="fa-solid fa-user-plus text-xl text-indigo-400"></i>
+                </div>
+                <span class="text-xs font-semibold mt-2 text-gray-300">To Contact</span>
+            </button>
+            <button class="flex flex-col items-center group">
+                <div class="w-14 h-14 bg-gray-800 border border-gray-700 rounded-2xl flex items-center justify-center transition-transform group-active:scale-90 group-hover:border-gray-600">
+                    <i class="fa-solid fa-building-columns text-xl text-purple-400"></i>
+                </div>
+                <span class="text-xs font-semibold mt-2 text-gray-300">Bank Transfer</span>
+            </button>
+            <button class="flex flex-col items-center group">
+                <div class="w-14 h-14 bg-gray-800 border border-gray-700 rounded-2xl flex items-center justify-center transition-transform group-active:scale-90 group-hover:border-gray-600">
+                    <i class="fa-solid fa-receipt text-xl text-pink-400"></i>
+                </div>
+                <span class="text-xs font-semibold mt-2 text-gray-300">History</span>
+            </button>
+        </div>
 
-        if (selected === correctCode) {
-            score++;
-            document.getElementById('score').innerText = score;
-            btn.classList.add('correct');
-            speakHindi("सही जवाब");
-            setTimeout(loadNewQuestion, 1200);
-        } else {
-            btn.classList.add('wrong');
-            const buttons = document.querySelectorAll('.opt');
-            buttons.forEach(b => {
-                if (b.dataset.code === correctCode) {
-                    b.classList.add('show-right');
-                }
-            });
+        <!-- Utility Services -->
+        <h2 class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-4 px-1">Recharge & Bill Payments</h2>
+        <div class="bg-gray-800 border border-gray-700 rounded-2xl p-4 grid grid-cols-4 gap-y-6 gap-x-2 mb-8 shadow-md">
+            <div class="flex flex-col items-center text-center cursor-pointer">
+                <i class="fa-solid fa-mobile-screen-button text-xl text-blue-400 mb-2"></i>
+                <span class="text-[11px] font-medium text-gray-400">Mobile</span>
+            </div>
+            <div class="flex flex-col items-center text-center cursor-pointer">
+                <i class="fa-solid fa-tv text-xl text-teal-400 mb-2"></i>
+                <span class="text-[11px] font-medium text-gray-400">DTH</span>
+            </div>
+            <div class="flex flex-col items-center text-center cursor-pointer">
+                <i class="fa-solid fa-lightbulb text-xl text-amber-400 mb-2"></i>
+                <span class="text-[11px] font-medium text-gray-400">Electricity</span>
+            </div>
+            <div class="flex flex-col items-center text-center cursor-pointer">
+                <i class="fa-solid fa-droplet text-xl text-cyan-400 mb-2"></i>
+                <span class="text-[11px] font-medium text-gray-400">Water</span>
+            </div>
+        </div>
 
-            document.getElementById('msg').innerHTML = `<span style="color:#e74c3c; font-weight:bold;">गलत जवाब!</span>`;
-            speakHindi("गलत जवाब");
-            setTimeout(loadNewQuestion, 2200);
+        <!-- Recent Transactions -->
+        <h2 class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-4 px-1">Recent Transactions</h2>
+        <div class="space-y-3">
+            <div class="bg-gray-800 border border-gray-700 p-4 rounded-2xl flex justify-between items-center shadow-sm">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-xl flex items-center justify-center">
+                        <i class="fa-solid fa-arrow-down"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-bold text-white">Received from Suresh</p>
+                        <p class="text-xs text-gray-400">Today, 2:30 PM</p>
+                    </div>
+                </div>
+                <p class="text-sm font-extrabold text-emerald-400">+₹1,500.00</p>
+            </div>
+            <div class="bg-gray-800 border border-gray-700 p-4 rounded-2xl flex justify-between items-center shadow-sm">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-rose-500/10 border border-rose-500/20 text-rose-400 rounded-xl flex items-center justify-center">
+                        <i class="fa-solid fa-arrow-up"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-bold text-white">Zelio E-Mobility Store</p>
+                        <p class="text-xs text-gray-400">Yesterday</p>
+                    </div>
+                </div>
+                <p class="text-sm font-extrabold text-rose-400">-₹450.00</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- BOTTOM SCANNER MODAL WINDOW -->
+    <div id="scannerModal" class="fixed inset-0 bg-black/90 z-50 flex flex-col justify-between hidden transition-all duration-300">
+        <div class="p-4 flex justify-between items-center border-b border-gray-800 bg-gray-900">
+            <span class="font-bold text-lg tracking-wide"><i class="fa-solid fa-camera mr-2 text-indigo-400"></i>Scan QR Code</span>
+            <button onclick="closeScanner()" class="w-10 h-10 bg-gray-800 hover:bg-gray-700 text-white rounded-full flex items-center justify-center transition-colors">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+        
+        <!-- Camera Viewfinder Window -->
+        <div class="flex-1 flex items-center justify-center p-6">
+            <div class="relative w-full max-w-sm aspect-square bg-gray-950 border-2 border-dashed border-gray-700 rounded-3xl overflow-hidden shadow-2xl shadow-indigo-500/10">
+                <div id="interactive-reader" class="w-full h-full"></div>
+            </div>
+        </div>
+
+        <div class="p-6 bg-gray-900 border-t border-gray-800 text-center text-xs text-gray-400 tracking-wide">
+            Align the QR code inside the box to automatically process payment.
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT FOR DYNAMIC SCANNING -->
+    <script>
+        let html5QrcodeScanner;
+
+        function onScanSuccess(decodedText, decodedResult) {
+            // Stop scanning immediately on successful catch
+            closeScanner();
+            
+            // Modern Alert Box displaying the read data
+            alert("🔒 Payment Gateway Initiated!\n\nScanned Payload Destination:\n" + decodedText + "\n\n(This structure can now interface with any backend UPI endpoint securely.)");
         }
-    }
 
-    // Progressive Web App PWA Service Worker Hook Registration 
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            // Yahan se '/' hata kar sahi path kar diya hai
-            navigator.serviceWorker.register('sw.js')
-                .then((registration) => {
-                    console.log('ServiceWorker registered perfectly with scope: ', registration.scope);
-                })
-                .catch((error) => {
-                    console.log('ServiceWorker registration process failed: ', error);
-                });
-        });
-    }
-</script>
+        function onScanFailure(error) {
+            // Fallback monitoring console logs silently
+            console.warn(`QR Identification Scanning Error: ${error}`);
+        }
 
+        function openScanner() {
+            document.getElementById('scannerModal').classList.remove('hidden');
+            
+            // Instantiating the Camera Scanner Engine
+            html5QrcodeScanner = new Html5Qrcode("interactive-reader");
+            
+            html5QrcodeScanner.start(
+                { facingMode: "environment" }, // Prioritize main rear camera
+                {
+                    fps: 15,                  // Frames per second scanning index
+                    qrbox: { width: 250, height: 250 } // Targeted view box boundary
+                },
+                onScanSuccess,
+                onScanFailure
+            ).catch((err) => {
+                alert("Camera Initialization Failed. Please ensure permissions are granted on your browser.");
+                closeScanner();
+            });
+        }
+
+        function closeScanner() {
+            document.getElementById('scannerModal').classList.add('hidden');
+            if (html5QrcodeScanner) {
+                html5QrcodeScanner.stop().then(() => {
+                    console.log("Scanner completely deactivated.");
+                }).catch(err => console.error("Error stopping scanner engine.", err));
+            }
+        }
+    </script>
 </body>
 </html>
