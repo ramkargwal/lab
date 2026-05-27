@@ -1,24 +1,25 @@
+
 <!DOCTYPE html>
 <html lang="hi">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>{{ page.title }} | AutoHotkey Script Viewer</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{{ '/assets/css/ahk_style.css' | relative_url }}">
+  <title>Home | AutoHotkey Script Viewer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet.css">
+  <link rel="stylesheet" href="/assets/css/ahk_styles.css">
 </head>
 <body>
 
   <header>
     <div class="nav-container">
-      <a href="{{ '/' | relative_url }}" class="logo">Ram Kargwal</a>
+      <a href="/" class="logo">Ram Kargwal</a>
       <nav>
         <ul>
           <li><a href="#">Game</a></li>
           <li><a href="#">Utility</a></li>
           <li><a href="#">Project</a></li>
           <li><a href="#">Docs</a></li>
-          <li><a style="color:#ffffff;font-weight:800;" href="{{ '/' | relative_url }}">AHK Code</a></li>
+          <li><a style="color:#ffffff;font-weight:800;" href="/">AHK Code</a></li>
           <li><a href="#" class="btn-signup">About Me</a></li>
         </ul>
       </nav>
@@ -28,7 +29,346 @@
   <div class="main-layout">
     
     <div class="container">
-        {{ content }}
+        <style>
+  /* --- SUPER PARENT BACKGROUND FIX --- */
+  *:has(> .posts-container), 
+  .posts-container, 
+  .main-content, 
+  .wrapper, 
+  .page-content, 
+  .home, 
+  article {
+    background-color: transparent !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  /* --- MAIN LAYOUT CSS --- */
+  .posts-container {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+  }
+
+  .post-card {
+    background: #ffffff !important;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05) !important;
+    border: 2px solid rgba(226, 232, 240, 0.6) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .post-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1) !important;
+  }
+
+  .post-image-wrapper {
+    width: 100%;
+    height: 340px;
+    overflow: hidden;
+  }
+
+  .post-image {
+    width: 100%;
+    height: 100%;
+    background-color: #e2e8f0;
+    background-size: cover;
+    background-position: center;
+    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  .post-card:hover .post-image {
+    transform: scale(1.05);
+  }
+
+  .post-content {
+    padding: 2.5rem;
+  }
+
+  .category-tag {
+    background: rgba(99, 102, 241, 0.1);
+    color: #8b5cf6;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 0.4rem 1rem;
+    border-radius: 50px;
+    display: inline-block;
+    margin-bottom: 1.2rem;
+  }
+
+  .post-title {
+    font-size: 1.75rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    line-height: 1.4;
+    letter-spacing: -0.5px;
+  }
+
+  .post-title a {
+    text-decoration: none;
+    color: #0f172a;
+    transition: all 0.3s ease;
+  }
+
+  .post-title a:hover {
+    color: #8b5cf6;
+  }
+
+  .post-excerpt {
+    color: #64748b;
+    margin-bottom: 2rem;
+    font-size: 1.05rem;
+    line-height: 1.7;
+  }
+
+  .post-meta {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    font-size: 0.9rem;
+    color: #94a3b8;
+    font-weight: 600;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 1.5rem;
+  }
+
+  /* --- PAGINATION CSS --- */
+  .pagination {
+    display: flex;
+    gap: 0.75rem;
+    margin: 4rem 0;
+    align-items: center;
+  }
+
+  .pagination span,
+  .pagination a {
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    font-weight: 600;
+    color: #64748b;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .pagination .active {
+    background: #8b5cf6;
+    color: white;
+    border-color: #8b5cf6;
+    box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
+  }
+
+  .pagination a:hover {
+    border-color: #8b5cf6;
+    color: #8b5cf6;
+    transform: translateY(-2px);
+  }
+
+  .pagination .nav-btn {
+    width: auto;
+    padding: 0 1.5rem;
+  }
+</style>
+
+<div class="posts-container" id="posts-container">
+  
+  
+  <article class="post-card" data-title="auto save tool for document editors" data-excerpt="automatically save your work in notepad or other editors at fixed intervals using ahk v2.">
+    <div class="post-image-wrapper">
+      <div class="post-image" 
+           style="background-image: url('https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1200&q=80');">
+      </div>
+    </div>
+    
+    <div class="post-content">
+      
+        <span class="category-tag">Automation</span>
+      
+      
+      <h2 class="post-title">
+        <a href="/automation/2026/05/27/auto-save-tool.html">Auto Save Tool for Document Editors</a>
+      </h2>
+      
+      <p class="post-excerpt">
+        Automatically save your work in notepad or other editors at fixed intervals using AHK v2.
+      </p>
+      
+      <div class="post-meta">
+        <span>By <strong>Sudarshan</strong></span>
+        <span>May 27, 2026</span>
+      </div>
+    </div>
+  </article>
+  
+  <article class="post-card" data-title="welcome to jekyll!" data-excerpt="you’ll find this post in your _posts directory. go ahead and edit it and re-build the site to see your changes. you can rebuild the site in many different ways, but the most common way is to run jekyll serve, which launches a web server and auto-regenerates your site when a file is updated.
+">
+    <div class="post-image-wrapper">
+      <div class="post-image" 
+           style="background-image: url('https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1200&q=80');">
+      </div>
+    </div>
+    
+    <div class="post-content">
+      
+        <span class="category-tag">jekyll</span>
+      
+      
+      <h2 class="post-title">
+        <a href="/jekyll/update/2026/05/26/welcome-to-jekyll.html">Welcome to Jekyll!</a>
+      </h2>
+      
+      <p class="post-excerpt">
+        You’ll find this post in your _posts directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way...
+      </p>
+      
+      <div class="post-meta">
+        <span>By <strong>Sudarshan</strong></span>
+        <span>May 26, 2026</span>
+      </div>
+    </div>
+  </article>
+  
+  <article class="post-card" data-title="my first blog" data-excerpt="-–
+">
+    <div class="post-image-wrapper">
+      <div class="post-image" 
+           style="background-image: url('https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1200&q=80');">
+      </div>
+    </div>
+    
+    <div class="post-content">
+      
+      
+      <h2 class="post-title">
+        <a href="/2026/05/26/my-first-blog.html">My First Blog</a>
+      </h2>
+      
+      <p class="post-excerpt">
+        -–
+
+      </p>
+      
+      <div class="post-meta">
+        <span>By <strong>Sudarshan</strong></span>
+        <span>May 26, 2026</span>
+      </div>
+    </div>
+  </article>
+  
+  <article class="post-card" data-title="professional & easy autohotkey script for cropping multiple images in faststone image viewer" data-excerpt="professional & easy autohotkey script for cropping multiple images in faststone image viewer easily with automation tricks.">
+    <div class="post-image-wrapper">
+      <div class="post-image" 
+           style="background-image: url('https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1200&q=80');">
+      </div>
+    </div>
+    
+    <div class="post-content">
+      
+        <span class="category-tag">Automation</span>
+      
+      
+      <h2 class="post-title">
+        <a href="/automation/2026/05/26/faststone-crop.html">Professional & Easy AutoHotkey Script for Cropping Multiple Images in FastStone Image Viewer</a>
+      </h2>
+      
+      <p class="post-excerpt">
+        Professional & Easy AutoHotkey Script for Cropping Multiple Images in FastStone Image Viewer easily with automation tricks.
+      </p>
+      
+      <div class="post-meta">
+        <span>By <strong>Sudarshan</strong></span>
+        <span>May 26, 2026</span>
+      </div>
+    </div>
+  </article>
+  
+
+  <div class="pagination" id="pagination-controls"></div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const searchInput = document.querySelector(".search-box");
+    const postCards = Array.from(document.querySelectorAll(".post-card"));
+    const paginationContainer = document.getElementById("pagination-controls");
+    
+    const postsPerPage = 2; // एक पेज पर 2 पोस्ट दिखेंगे
+    let currentPage = 1;
+    let filteredCards = [...postCards]; 
+
+    function displayPage(page) {
+      currentPage = page;
+      const startIndex = (page - 1) * postsPerPage;
+      const endIndex = startIndex + postsPerPage;
+
+      postCards.forEach(card => card.style.display = "none");
+
+      filteredCards.slice(startIndex, endIndex).forEach(card => {
+        card.style.display = "";
+      });
+
+      renderPaginationButtons();
+    }
+
+    function renderPaginationButtons() {
+      paginationContainer.innerHTML = "";
+      const totalPages = Math.ceil(filteredCards.length / postsPerPage);
+
+      if (totalPages <= 1) return; 
+
+      if (currentPage > 1) {
+        const prevBtn = document.createElement("a");
+        prevBtn.className = "nav-btn";
+        prevBtn.innerText = "Prev";
+        prevBtn.addEventListener("click", () => displayPage(currentPage - 1));
+        paginationContainer.appendChild(prevBtn);
+      }
+
+      for (let i = 1; i <= totalPages; i++) {
+        const pageBtn = document.createElement("a");
+        pageBtn.innerText = i;
+        if (i === currentPage) pageBtn.className = "active";
+        pageBtn.addEventListener("click", () => displayPage(i));
+        paginationContainer.appendChild(pageBtn);
+      }
+
+      if (currentPage < totalPages) {
+        const nextBtn = document.createElement("a");
+        nextBtn.className = "nav-btn";
+        nextBtn.innerText = "Next";
+        nextBtn.addEventListener("click", () => displayPage(currentPage + 1));
+        paginationContainer.appendChild(nextBtn);
+      }
+    }
+
+    if (searchInput) {
+      searchInput.addEventListener("keyup", function(e) {
+        const searchTerm = e.target.value.toLowerCase().trim();
+
+        filteredCards = postCards.filter(card => {
+          const title = card.getAttribute("data-title");
+          const excerpt = card.getAttribute("data-excerpt");
+          return title.includes(searchTerm) || excerpt.includes(searchTerm);
+        });
+
+        displayPage(1);
+      });
+    }
+
+    displayPage(1);
+  });
+</script>
     </div>
 
     <aside class="sidebar">
@@ -39,10 +379,10 @@
       <div class="widget">
         <h3>Useful Tools</h3>
         <ul class="widget-list">
-          <li><a href="{{ '/apps/Universal_Conversion_Hub.html' | relative_url }}">Unicode Converter <span>🌐</span></a></li>
-          <li><a href="{{ '/apps/live_html_editor.html' | relative_url }}">Live HTML Editor <span>💻</span></a></li>
-          <li><a href="{{ '/apps/job_fair_qr.html' | relative_url }}">Job Fair QR Generator <span>📱</span></a></li>
-	<li><a href="{{ '/apps/Morse_code.html' | relative_url }}">Morse code studio <span>📡</span></a></li>
+          <li><a href="/apps/Universal_Conversion_Hub.html">Unicode Converter <span>🌐</span></a></li>
+          <li><a href="/apps/live_html_editor.html">Live HTML Editor <span>💻</span></a></li>
+          <li><a href="/apps/job_fair_qr.html">Job Fair QR Generator <span>📱</span></a></li>
+	<li><a href="/apps/Morse_code.html">Morse code studio <span>📡</span></a></li>
 
         </ul>
       </div>
@@ -50,28 +390,63 @@
       <div class="widget">
         <h3>AHK Scripts</h3>
         <ul class="widget-list">
-          {% for post in site.posts limit:5 %}
+          
           <li>
-            <a href="{{ post.url | relative_url }}">
-              {{ post.title | truncate: 22 }}
+            <a href="/automation/2026/05/27/auto-save-tool.html">
+              Auto Save Tool for ...
               <span>📄</span>
             </a>
           </li>
-          {% endfor %}
+          
+          <li>
+            <a href="/jekyll/update/2026/05/26/welcome-to-jekyll.html">
+              Welcome to Jekyll!
+              <span>📄</span>
+            </a>
+          </li>
+          
+          <li>
+            <a href="/2026/05/26/my-first-blog.html">
+              My First Blog
+              <span>📄</span>
+            </a>
+          </li>
+          
+          <li>
+            <a href="/automation/2026/05/26/faststone-crop.html">
+              Professional & Easy...
+              <span>📄</span>
+            </a>
+          </li>
+          
         </ul>
       </div>
 
       <div class="widget">
         <h3>Categories</h3>
         <ul class="widget-list">
-          {% for category in site.categories %}
+          
           <li>
             <a href="#">
-              {{ category | first }}
-              <span>{{ category | last | size }}</span>
+              Automation
+              <span>2</span>
             </a>
           </li>
-          {% endfor %}
+          
+          <li>
+            <a href="#">
+              jekyll
+              <span>1</span>
+            </a>
+          </li>
+          
+          <li>
+            <a href="#">
+              update
+              <span>1</span>
+            </a>
+          </li>
+          
         </ul>
       </div>
     </aside>
@@ -86,6 +461,7 @@
         <a href="#">GitHub</a>
         <a href="#">LinkedIn</a>
       </div>
+
     </div>
   </footer>
 
