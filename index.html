@@ -3,8 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Morse Code Studio</title>
+<title>Sudarshan Kumar</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
@@ -14,239 +13,169 @@
     margin:0;
     padding:0;
     box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
 }
 
 body{
-    font-family:'Poppins',sans-serif;
+    background:linear-gradient(135deg,#0f172a,#111827,#1e293b);
     min-height:100vh;
-    background:
-    linear-gradient(135deg,#0f172a,#111827);
-
     color:white;
     overflow-x:hidden;
 }
 
-/* Background Glow */
+/* HEADER */
 
-body::before{
-    content:"";
-    position:fixed;
-    width:500px;
-    height:500px;
-    background:#7c3aed;
-    filter:blur(150px);
-    top:-200px;
-    left:-200px;
-    opacity:0.4;
+header{
+    width:100%;
+    padding:20px 8%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid rgba(255,255,255,0.1);
 }
 
-body::after{
-    content:"";
-    position:fixed;
-    width:500px;
-    height:500px;
-    background:#06b6d4;
-    filter:blur(150px);
-    bottom:-200px;
-    right:-200px;
-    opacity:0.4;
-}
-
-/* Main Container */
-
-.container{
-    width:90%;
-    max-width:1200px;
-    margin:auto;
-    padding:40px 0;
-    position:relative;
-    z-index:1;
-}
-
-/* Heading */
-
-.main-title{
-    text-align:center;
-    margin-bottom:40px;
-}
-
-.main-title h1{
-    font-size:60px;
-    margin-bottom:15px;
-
-    background:linear-gradient(to right,#ffffff,#c4b5fd,#67e8f9);
+.logo{
+    font-size:30px;
+    font-weight:700;
+    background:linear-gradient(to right,#c084fc,#22d3ee);
     -webkit-background-clip:text;
     -webkit-text-fill-color:transparent;
 }
 
-.main-title p{
+/* HERO */
+
+.hero{
+    min-height:90vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:60px;
+    padding:60px 8%;
+}
+
+.left{
+    flex:1;
+    min-width:300px;
+}
+
+.left h1{
+    font-size:65px;
+    line-height:1.1;
+    margin-bottom:20px;
+}
+
+.left h1 span{
+    background:linear-gradient(to right,#c084fc,#22d3ee);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+
+.left p{
     color:#cbd5e1;
+    line-height:1.8;
+    margin-bottom:30px;
     font-size:18px;
 }
 
-/* Card */
-
-.card{
-    background:rgba(255,255,255,0.08);
-    border:1px solid rgba(255,255,255,0.12);
-    backdrop-filter:blur(12px);
-
-    padding:35px;
-    border-radius:30px;
-
-    margin-bottom:35px;
-
-    box-shadow:
-    0 10px 30px rgba(0,0,0,0.35);
-}
-
-.section-title{
-    font-size:28px;
-    margin-bottom:25px;
-}
-
-/* Textarea */
-
-textarea{
-    width:100%;
-    min-height:180px;
-
-    background:rgba(0,0,0,0.25);
-    color:white;
-
-    border:none;
-    outline:none;
-
-    border-radius:20px;
-
-    padding:20px;
-
-    font-size:18px;
-
-    resize:vertical;
-
-    border:1px solid rgba(255,255,255,0.08);
-
-    transition:0.3s;
-}
-
-textarea:focus{
-    border:1px solid #67e8f9;
-    box-shadow:0 0 20px rgba(6,182,212,0.35);
-}
-
-textarea::placeholder{
-    color:#94a3b8;
-}
-
-/* Buttons */
+/* BUTTONS */
 
 .buttons{
-    margin-top:25px;
-
     display:flex;
-    gap:15px;
+    gap:20px;
     flex-wrap:wrap;
 }
 
-button{
-    border:none;
-    cursor:pointer;
-
-    padding:15px 25px;
-
-    border-radius:15px;
-
-    font-size:16px;
+.btn{
+    padding:15px 30px;
+    border-radius:14px;
+    text-decoration:none;
     font-weight:600;
-
-    color:white;
-
     transition:0.3s;
 }
 
-button:hover{
+.primary{
+    background:linear-gradient(135deg,#7c3aed,#06b6d4);
+    color:white;
+}
+
+.primary:hover{
     transform:translateY(-4px);
 }
 
-.btn1{
-    background:linear-gradient(135deg,#7c3aed,#4f46e5);
+.secondary{
+    border:1px solid rgba(255,255,255,0.2);
+    color:white;
+    background:rgba(255,255,255,0.05);
 }
 
-.btn2{
-    background:linear-gradient(135deg,#06b6d4,#0891b2);
+.secondary:hover{
+    background:rgba(255,255,255,0.1);
 }
 
-.btn3{
-    background:linear-gradient(135deg,#1e293b,#0f172a);
+/* CARD */
+
+.card{
+    flex:1;
+    min-width:320px;
+    background:rgba(255,255,255,0.08);
+    border:1px solid rgba(255,255,255,0.1);
+    backdrop-filter:blur(20px);
+    padding:35px;
+    border-radius:28px;
+    box-shadow:0 10px 40px rgba(0,0,0,0.3);
 }
 
-/* Output */
-
-.output{
-    margin-top:25px;
-
-    min-height:120px;
-
-    background:rgba(0,0,0,0.25);
-
-    border-radius:20px;
-
-    padding:20px;
-
-    font-size:22px;
-
-    color:#67e8f9;
-
-    border:1px solid rgba(255,255,255,0.08);
-
-    word-break:break-word;
+.card h2{
+    margin-bottom:15px;
+    font-size:30px;
 }
 
-/* Table */
-
-.table-wrap{
-    overflow:auto;
+.card p{
+    color:#cbd5e1;
+    line-height:1.8;
+    margin-bottom:25px;
 }
 
-table{
-    width:100%;
-    border-collapse:collapse;
+/* WEBSITE LINKS */
+
+.website-links{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
 }
 
-th{
-    background:
-    linear-gradient(135deg,#7c3aed,#06b6d4);
-
-    padding:18px;
-    text-align:left;
+.website-links a{
+    text-decoration:none;
+    color:white;
+    padding:16px 20px;
+    border-radius:14px;
+    background:rgba(255,255,255,0.07);
+    border:1px solid rgba(255,255,255,0.1);
+    transition:0.3s;
+    font-weight:500;
 }
 
-td{
-    padding:16px;
-
-    border-bottom:
-    1px solid rgba(255,255,255,0.08);
+.website-links a:hover{
+    transform:translateX(8px);
+    background:linear-gradient(135deg,#7c3aed,#06b6d4);
 }
 
-tr:hover{
-    background:
-    rgba(255,255,255,0.05);
-}
-
-/* Footer */
+/* FOOTER */
 
 footer{
     text-align:center;
-    padding:30px;
+    padding:25px;
     color:#94a3b8;
+    border-top:1px solid rgba(255,255,255,0.08);
 }
 
-/* Responsive */
+/* MOBILE */
 
 @media(max-width:768px){
 
-    .main-title h1{
+    .left h1{
         font-size:42px;
     }
 
@@ -254,9 +183,11 @@ footer{
         flex-direction:column;
     }
 
-    button{
+    .btn{
         width:100%;
+        text-align:center;
     }
+
 }
 
 </style>
@@ -264,310 +195,83 @@ footer{
 
 <body>
 
-<div class="container">
+<header>
 
-    <!-- Heading -->
+    <div class="logo">
+        
+RK.
+    </div>
 
-    <div class="main-title">
+</header>
 
-        <h1>⚡ Morse Code Studio</h1>
+<section class="hero">
+
+    <div class="left">
+
+        <h1>
+            Welcome To <span>My Website</span>
+        </h1>
 
         <p>
-            Beautiful Morse Code Converter Website
+            Hello! I'm Ram kargwal.  
+            This is my personal website where you can explore my projects,
+            social links, portfolio, and creative works.
         </p>
 
-    </div>
-
-    <!-- Text To Morse -->
-
-    <div class="card">
-
-        <h2 class="section-title">
-            🔤 Text To Morse
-        </h2>
-
-        <textarea
-        id="textInput"
-        placeholder="Type your text here..."></textarea>
-
         <div class="buttons">
 
-            <button
-            class="btn1"
-            onclick="convertToMorse()">
+            <!-- YOUR WEBSITE LINK -->
+            <a href="https://yourwebsite.com" class="btn primary" target="_blank">
+                Visit My Website
+            </a>
 
-            Convert To Morse
-
-            </button>
-
-            <button
-            class="btn2"
-            onclick="copyOutput()">
-
-            Copy Output
-
-            </button>
-
-            <button
-            class="btn3"
-            onclick="clearAll()">
-
-            Clear
-
-            </button>
-
-        </div>
-
-        <div
-        class="output"
-        id="output">
-
-        Morse code will appear here...
+            <!-- CONTACT LINK -->
+            <a href="mailto:youremail@gmail.com" class="btn secondary">
+                Contact Me
+            </a>
 
         </div>
 
     </div>
-
-    <!-- Morse To Text -->
 
     <div class="card">
 
-        <h2 class="section-title">
-            📡 Morse To Text
-        </h2>
+        <h2>My Links</h2>
 
-        <textarea
-        id="morseInput"
-        placeholder="Enter Morse code here..."></textarea>
+        <p>
+            Add your website, GitHub, YouTube, Instagram,
+            or any custom links here.
+        </p>
 
-        <div class="buttons">
+        <div class="website-links">
 
-            <button
-            class="btn1"
-            onclick="convertToText()">
+            <!-- CHANGE LINKS BELOW -->
 
-            Decode Morse
+            <a href="https://yourwebsite.com" target="_blank">
+                🌐 My Main Website
+            </a>
 
-            </button>
+            <a href="https://github.com/" target="_blank">
+                💻 GitHub Profile
+            </a>
 
-        </div>
+            <a href="https://youtube.com/" target="_blank">
+                ▶ YouTube Channel
+            </a>
 
-        <div
-        class="output"
-        id="decoded">
-
-        Decoded text will appear here...
-
-        </div>
-
-    </div>
-
-    <!-- Morse Table -->
-
-    <div class="card">
-
-        <h2 class="section-title">
-            📚 Complete Morse Code Reference
-        </h2>
-
-        <div class="table-wrap">
-
-            <table>
-
-                <tr>
-                    <th>Character</th>
-                    <th>Morse</th>
-                    <th>Character</th>
-                    <th>Morse</th>
-                </tr>
-
-                <!-- Letters -->
-
-                <tr><td>A</td><td>.-</td><td>N</td><td>-.</td></tr>
-                <tr><td>B</td><td>-...</td><td>O</td><td>---</td></tr>
-                <tr><td>C</td><td>-.-.</td><td>P</td><td>.--.</td></tr>
-                <tr><td>D</td><td>-..</td><td>Q</td><td>--.-</td></tr>
-                <tr><td>E</td><td>.</td><td>R</td><td>.-.</td></tr>
-                <tr><td>F</td><td>..-.</td><td>S</td><td>...</td></tr>
-                <tr><td>G</td><td>--.</td><td>T</td><td>-</td></tr>
-                <tr><td>H</td><td>....</td><td>U</td><td>..-</td></tr>
-                <tr><td>I</td><td>..</td><td>V</td><td>...-</td></tr>
-                <tr><td>J</td><td>.---</td><td>W</td><td>.--</td></tr>
-                <tr><td>K</td><td>-.-</td><td>X</td><td>-..-</td></tr>
-                <tr><td>L</td><td>.-..</td><td>Y</td><td>-.--</td></tr>
-                <tr><td>M</td><td>--</td><td>Z</td><td>--..</td></tr>
-
-                <!-- Numbers -->
-
-                <tr><td>0</td><td>-----</td><td>1</td><td>.----</td></tr>
-                <tr><td>2</td><td>..---</td><td>3</td><td>...--</td></tr>
-                <tr><td>4</td><td>....-</td><td>5</td><td>.....</td></tr>
-                <tr><td>6</td><td>-....</td><td>7</td><td>--...</td></tr>
-                <tr><td>8</td><td>---..</td><td>9</td><td>----.</td></tr>
-
-                <!-- Symbols -->
-
-                <tr><td>.</td><td>.-.-.-</td><td>,</td><td>--..--</td></tr>
-                <tr><td>?</td><td>..--..</td><td>!</td><td>-.-.--</td></tr>
-                <tr><td>@</td><td>.--.-.</td><td>$</td><td>...-..-</td></tr>
-                <tr><td>&</td><td>.-...</td><td>+</td><td>.-.-.</td></tr>
-
-            </table>
+            <a href="https://instagram.com/" target="_blank">
+                📸 Instagram
+            </a>
 
         </div>
 
     </div>
 
-</div>
+</section>
 
 <footer>
-    Made With ❤️ Morse Studio
+    © 2026 Sudarshan Kumar | Personal Website
 </footer>
-
-<script>
-
-/* Morse Dictionary */
-
-const morseCode = {
-
-    A: ".-",
-    B: "-...",
-    C: "-.-.",
-    D: "-..",
-    E: ".",
-    F: "..-.",
-    G: "--.",
-    H: "....",
-    I: "..",
-    J: ".---",
-    K: "-.-",
-    L: ".-..",
-    M: "--",
-    N: "-.",
-    O: "---",
-    P: ".--.",
-    Q: "--.-",
-    R: ".-.",
-    S: "...",
-    T: "-",
-    U: "..-",
-    V: "...-",
-    W: ".--",
-    X: "-..-",
-    Y: "-.--",
-    Z: "--..",
-
-    0:"-----",
-    1:".----",
-    2:"..---",
-    3:"...--",
-    4:"....-",
-    5:".....",
-    6:"-....",
-    7:"--...",
-    8:"---..",
-    9:"----.",
-
-    ".":".-.-.-",
-    ",":"--..--",
-    "?":"..--..",
-    "!":"-.-.--",
-    "@":".--.-.",
-    "$":"...-..-",
-    "&":".-...",
-    "+":".-.-.",
-
-    " ":"/"
-};
-
-/* Reverse Dictionary */
-
-const reverseMorse = {};
-
-for(let key in morseCode){
-
-    reverseMorse[morseCode[key]] = key;
-}
-
-/* Text To Morse */
-
-function convertToMorse(){
-
-    const text =
-    document.getElementById("textInput")
-    .value
-    .toUpperCase();
-
-    let result = "";
-
-    for(let char of text){
-
-        if(morseCode[char]){
-
-            result +=
-            morseCode[char] + " ";
-        }
-    }
-
-    document.getElementById("output")
-    .innerText = result;
-}
-
-/* Morse To Text */
-
-function convertToText(){
-
-    const morse =
-    document.getElementById("morseInput")
-    .value
-    .trim();
-
-    const words = morse.split(" ");
-
-    let result = "";
-
-    for(let code of words){
-
-        if(reverseMorse[code]){
-
-            result += reverseMorse[code];
-        }
-    }
-
-    document.getElementById("decoded")
-    .innerText = result;
-}
-
-/* Copy */
-
-function copyOutput(){
-
-    const text =
-    document.getElementById("output")
-    .innerText;
-
-    navigator.clipboard.writeText(text);
-
-    alert("Copied Successfully!");
-}
-
-/* Clear */
-
-function clearAll(){
-
-    document.getElementById("textInput").value = "";
-    document.getElementById("morseInput").value = "";
-
-    document.getElementById("output")
-    .innerText =
-    "Morse code will appear here...";
-
-    document.getElementById("decoded")
-    .innerText =
-    "Decoded text will appear here...";
-}
-
-</script>
 
 </body>
 </html>
