@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Cat Taxonomy Explorer</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+/* =========================
+   BASIC
+========================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    font-family:'Poppins',sans-serif;
+    background:
+    linear-gradient(to bottom right,#f8fbff,#eef5ff,#ffffff);
+    color:#1c2430;
+    overflow-x:hidden;
+}
+
+/* =========================
+   HERO
+========================= */
+
+.hero{
+    min-height:60vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    text-align:center;
+    padding:40px 20px;
+    position:relative;
+    overflow:hidden;
+}
+
+.hero::before{
+    content:"";
+    position:absolute;
+    width:700px;
+    height:700px;
+    background:
+    radial-gradient(circle,#8fd3ff55,transparent 70%);
+    top:-250px;
+    left:-200px;
+    animation:float1 8s ease-in-out infinite;
+}
+
+.hero::after{
+    content:"";
+    position:absolute;
+    width:600px;
+    height:600px;
+    background:
+    radial-gradient(circle,#bca7ff44,transparent 70%);
+    bottom:-250px;
+    right:-200px;
+    animation:float2 10s ease-in-out infinite;
+}
+
+@keyframes float1{
+    0%{transform:translateY(0px);}
+    50%{transform:translateY(30px);}
+    100%{transform:translateY(0px);}
+}
+
+@keyframes float2{
+    0%{transform:translateY(0px);}
+    50%{transform:translateY(-30px);}
+    100%{transform:translateY(0px);}
+}
+
+.hero h1{
+    font-size:70px;
+    font-weight:700;
+
+    background:
+    linear-gradient(to right,#007cf0,#6a5cff);
+
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+
+    z-index:2;
+}
+
+.hero p{
+    margin-top:20px;
+    font-size:20px;
+    color:#5c6773;
+    max-width:850px;
+    line-height:1.8;
+    z-index:2;
+}
+
+/* =========================
+   CONTAINER
+========================= */
+
+.container{
+    width:95%;
+    max-width:1250px;
+    margin:auto;
+    padding-bottom:80px;
+}
+
+/* =========================
+   TAXONOMY CARD
+========================= */
+
+.taxonomy-card{
+    background:white;
+    margin-bottom:30px;
+    border-radius:30px;
+    overflow:hidden;
+    border:1px solid #dde8f5;
+
+    box-shadow:
+    0 10px 30px rgba(0,0,0,0.05);
+
+    transition:0.5s;
+}
+
+.taxonomy-card:hover{
+    transform:translateY(-6px);
+
+    box-shadow:
+    0 18px 40px rgba(0,0,0,0.08);
+}
+
+/* =========================
+   CARD HEADER
+========================= */
+
+.taxonomy-header{
+    padding:25px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.taxonomy-header:hover{
+    background:#f7fbff;
+}
+
+.left{
+    display:flex;
+    align-items:center;
+    gap:22px;
+}
+
+.left img{
+    width:95px;
+    height:95px;
+    border-radius:24px;
+    object-fit:cover;
+    border:4px solid #eef5ff;
+    transition:0.4s;
+}
+
+.taxonomy-card:hover .left img{
+    transform:scale(1.05) rotate(2deg);
+}
+
+.rank{
+    font-size:13px;
+    text-transform:uppercase;
+    letter-spacing:3px;
+    color:#2f80ed;
+    font-weight:600;
+}
+
+.name{
+    font-size:34px;
+    font-weight:700;
+    margin-top:4px;
+}
+
+.scientific{
+    margin-top:7px;
+    color:#637082;
+    font-size:16px;
+}
+
+.arrow{
+    font-size:38px;
+    color:#2f80ed;
+    transition:0.5s;
+}
+
+.taxonomy-card.active .arrow{
+    transform:rotate(180deg);
+}
+
+/* =========================
+   CONTENT
+========================= */
+
+.content{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height 0.7s ease;
+}
+
+.content-inner{
+    padding:35px;
+    border-top:1px solid #edf3fa;
+}
+
+/* =========================
+   DESCRIPTION
+========================= */
+
+.description{
+    font-size:17px;
+    line-height:1.9;
+    color:#465260;
+    margin-bottom:35px;
+}
+
+/* =========================
+   SECTION TITLE
+========================= */
+
+.section-title{
+    font-size:30px;
+    margin-bottom:25px;
+    color:#1f4ea7;
+}
+
+/* =========================
+   GRID
+========================= */
+
+.creatures{
+    display:grid;
+    grid-template-columns:
+    repeat(auto-fit,minmax(220px,1fr));
+    gap:25px;
+}
+
+/* =========================
+   CREATURE CARD
+========================= */
+
+.creature{
+    background:#ffffff;
+    border-radius:25px;
+    overflow:hidden;
+    border:1px solid #e8eef7;
+    transition:0.5s;
+}
+
+.creature:hover{
+    transform:
+    translateY(-10px)
+    scale(1.02);
+
+    box-shadow:
+    0 18px 35px rgba(0,0,0,0.08);
+}
+
+.creature img{
+    width:100%;
+    height:190px;
+    object-fit:cover;
+    transition:0.5s;
+}
+
+.creature:hover img{
+    transform:scale(1.08);
+}
+
+.creature-body{
+    padding:18px;
+}
+
+.creature h3{
+    font-size:22px;
+    margin-bottom:10px;
+}
+
+.creature p{
+    color:#66717d;
+    line-height:1.7;
+    font-size:15px;
+}
+
+/* =========================
+   TIMELINE
+========================= */
+
+.timeline{
+    margin-top:25px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+}
+
+.timeline div{
+    background:#edf5ff;
+    color:#1f4ea7;
+    padding:10px 18px;
+    border-radius:50px;
+    font-weight:600;
+    font-size:14px;
+}
+
+/* =========================
+   SCROLL ANIMATION
+========================= */
+
+.hidden{
+    opacity:0;
+    transform:translateY(50px);
+    transition:all 1s;
+}
+
+.show{
+    opacity:1;
+    transform:translateY(0px);
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+footer{
+    padding:40px 20px;
+    text-align:center;
+    color:#607080;
+    font-size:15px;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:800px){
+
+    .hero h1{
+        font-size:44px;
+    }
+
+    .hero p{
+        font-size:17px;
+    }
+
+    .name{
+        font-size:26px;
+    }
+
+    .left{
+        align-items:flex-start;
+    }
+
+    .left img{
+        width:75px;
+        height:75px;
+    }
+
+    .taxonomy-header{
+        padding:20px;
+    }
+
+    .content-inner{
+        padding:25px;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<section class="hero">
+
+<h1>Cat Taxonomy</h1>
+
+<p>
+बिल्ली (Cat) की पूरी जैविक वर्गीकरण प्रणाली को सुंदर और इंटरैक्टिव तरीके से जानिए।
+हर टैक्सनॉमी स्तर पर क्लिक करें और उसके अंदर आने वाले जीवों और जानकारी को देखें।
+</p>
+
+</section>
+
+<div class="container">
+
+<div class="taxonomy-card hidden">
+
+<div class="taxonomy-header">
+
+<div class="left">
+
+<img src="https://images.unsplash.com/photo-1534972195531-d756b9bfa9f2?q=80&w=1200&auto=format&fit=crop">
+
+<div>
+
+<div class="rank">Domain</div>
+
+<div class="name">Eukarya</div>
+
+<div class="scientific">
+  <strong>जटिल कोशिका वाले जीव -> </strong>Eukarya में वे सभी जीव आते हैं जिनकी कोशिकाओं में nucleus मौजूद होता है।
+</div>
+
+</div>
+</div>
+
+<div class="arrow">⌄</div>
+
+</div>
+
+<div class="content">
+
+<div class="content-inner">
+
+<p class="description">
+Eukarya में वे सभी जीव आते हैं जिनकी कोशिकाओं में nucleus मौजूद होता है।
+</p>
+
+<div class="timeline">
+<div>Plants</div>
+<div>Animals</div>
+<div>Fungi</div>
+<div>Protists</div>
+</div>
+
+<br><br>
+
+<h2 class="section-title">
+Eukarya के उदाहरण
+</h2>
+
+<div class="creatures">
+
+<div class="creature">
+
+<img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=1200&auto=format&fit=crop">
+
+<div class="creature-body">
+
+<h3>बिल्ली</h3>
+
+<p>
+हमारा प्यारा पालतू जानवर।
+</p>
+
+</div>
+</div>
+
+<div class="creature">
+
+<img src="https://images.unsplash.com/photo-1473773508845-188df298d2d1?q=80&w=1200&auto=format&fit=crop">
+
+<div class="creature-body">
+
+<h3>पौधे</h3>
+
+<p>
+प्रकाश संश्लेषण करने वाले जीव।
+</p>
+
+</div>
+</div>
+
+<div class="creature">
+
+<img src="https://images.unsplash.com/photo-1501004318641-b39e6451bec6?q=80&w=1200&auto=format&fit=crop">
+
+<div class="creature-body">
+
+<h3>फंगस</h3>
+
+<p>
+मशरूम और यीस्ट जैसे जीव।
+</p>
+
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+</div>
+
+<div class="taxonomy-card hidden">
+
+<div class="taxonomy-header">
+
+<div class="left">
+
+<img src="https://images.unsplash.com/photo-1517849845537-4d257902454a?q=80&w=1200&auto=format&fit=crop">
+
+<div>
+
+<div class="rank">Kingdom</div>
+
+<div class="name">Animalia</div>
+
+<div class="scientific">
+<strong>सभी जानवर -> </strong>Animalia kingdom में वे जीव आते हैं जो भोजन स्वयं नहीं बनाते।
+</div>
+
+</div>
+</div>
+
+<div class="arrow">⌄</div>
+
+</div>
+
+<div class="content">
+
+<div class="content-inner">
+
+<p class="description">
+Animalia kingdom में वे जीव आते हैं जो भोजन स्वयं नहीं बनाते।
+</p>
+
+<div class="timeline">
+<div>Mammals</div>
+<div>Birds</div>
+<div>Fish</div>
+<div>Reptiles</div>
+</div>
+
+<br><br>
+
+<h2 class="section-title">
+Animalia के जीव
+</h2>
+
+<div class="creatures">
+
+<div class="creature">
+
+<img src="https://images.unsplash.com/photo-1549366021-9f761d450615?q=80&w=1200&auto=format&fit=crop">
+
+<div class="creature-body">
+
+<h3>शेर</h3>
+
+<p>
+जंगल का शक्तिशाली राजा।
+</p>
+
+</div>
+</div>
+
+<div class="creature">
+
+<img src="https://images.unsplash.com/photo-1557050543-4d5f4e07ef46?q=80&w=1200&auto=format&fit=crop">
+
+<div class="creature-body">
+
+<h3>हाथी</h3>
+
+<p>
+सबसे बड़ा स्थलीय जानवर।
+</p>
+
+</div>
+</div>
+
+<div class="creature">
+
+<img src="https://images.unsplash.com/photo-1513360371669-4adf3dd7dff8?q=80&w=1200&auto=format&fit=crop">
+
+<div class="creature-body">
+
+<h3>बिल्ली</h3>
+
+<p>
+फुर्तीला और चंचल जानवर।
+</p>
+
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+</div>
+
+<div class="taxonomy-card hidden">
+
+<div class="taxonomy-header">
+
+<div class="left">
+
+<img src="https://images.unsplash.com/photo-1507146426996-ef05306b995a?q=80&w=1200&auto=format&fit=crop">
+
+<div>
+
+<div class="rank">Phylum</div>
+
+<div class="name">Chordata</div>
+
+<div class="scientific">
+<strong>रीढ़ वाले जीव -> </strong>Chordata समूह के जीवों में रीढ़ की हड्डी होती है।
+</div>
+
+</div>
+</div>
+
+<div class="arrow">⌄</div>
+
+</div>
+
+<div class="content">
+
+<div class="content-inner">
+
+<p class="description">
+Chordata समूह के जीवों में रीढ़ की हड्डी होती है।
+</p>
+
+<h2 class="section-title">
+Chordata के सदस्य
+</h2>
+
+<div class="creatures">
+
+<div class="creature">
+
+<img src="https://images.unsplash.com/photo-1524704654690-b56c05c78a00?q=80&w=1200&auto=format&fit=crop">
+
+<div class="creature-body">
+
+<h3>मछली</h3>
+
+<p>
+जल में रहने वाला रीढ़धारी जीव।
+</p>
+
+</div>
+</div>
+
+<div class="creature">
+
+<img src="https://images.unsplash.com/photo-1444464666168-49d633b86797?q=80&w=1200&auto=format&fit=crop">
+
+<div class="creature-body">
+
+<h3>गरुड़</h3>
+
+<p>
+तेज दृष्टि वाला पक्षी।
+</p>
+
+</div>
+</div>
+
+<div class="creature">
+
+<img src="https://images.unsplash.com/photo-1529778459826-3b10b0a887a0?q=80&w=1200&auto=format&fit=crop">
+
+<div class="creature-body">
+
+<h3>बिल्ली</h3>
+
+<p>
+लचीली रीढ़ की हड्डी वाली।
+</p>
+
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+</div>
+
+<div class="taxonomy-card hidden">
+
+<div class="taxonomy-header">
+
+<div class="left">
+
+<img src="https://images.unsplash.com/photo-1517849845537-4d257902454a?q=80&w=1200&auto=format&fit=crop">
+
+<div>
+
+<div class="rank">Class</div>
+
+<div class="name">Mammalia</div>
+
+<div class="scientific">
+<strong>स्तनधारी जीव -> </strong>Mammalia वर्ग के जीव अपने बच्चों को दूध पिलाते हैं।
+</div>
+
+</div>
+</div>
+
+<div class="arrow">⌄</div>
+
+</div>
+
+<div class="content">
+
+<div class="content-inner">
+
+<p class="description">
+Mammalia वर्ग के जीव अपने बच्चों को दूध पिलाते हैं।
+</p>
+
+<h2 class="section-title">
+Mammalia के उदाहरण
+</h2>
+
+<div class="creatures">
+
+<div class="creature">
+
+<img src="https://images.unsplash.com/photo-1474511320723-9a56873867b5?q=80&w=1200&auto=format&fit=crop">
+
+<div class="creature-body">
+
+<h3>भेड़िया</h3>
+
+<p>
+जंगली शिकारी स्तनधारी।
+</p>
+
+</div>
+</div>
+
+<div class="creature">
+
+<img src="https://images.unsplash.com/photo-1535930749574-1399327ce78f?q=80&w=1200&auto=format&fit=crop">
+
+<div class="creature-body">
+
+<h3>डॉल्फिन</h3>
+
+<p>
+समुद्री बुद्धिमान स्तनधारी।
+</p>
+
+</div>
+</div>
+
+<div class="creature">
+
+<img src="https://images.unsplash.com/photo-1519052537078-e6302a4968d4?q=80&w=1200&auto=format&fit=crop">
+
+<div class="creature-body">
+
+<h3>बिल्ली</h3>
+
+<p>
+बालों वाली पालतू स्तनधारी।
+</p>
+
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+</div>
+
+<div class="taxonomy-card hidden">
+
+<div class="taxonomy-header">
+
+<div class="left">
+
+<img src="https://images.unsplash.com/photo-1477764250597-dffe9f601ae8?q=80&w=1200&auto=format&fit=crop">
+
+<div>
+
+<div class="rank">Order</div>
+
+<div class="name">Carnivora</div>
+
+<div class="scientific">
+<strong>मांसाहारी जीव -> </strong> Carnivora समूह में मांस खाने के लिए विशेष दांतों वाले जीव आते हैं।
+</div>
+
+</div>
+</div>
+
+<div class="arrow">⌄</div>
+
+</div>
+
+<div class="content">
+
+<div class="content-inner">
+
+<p class="description">
+Carnivora समूह में बाघ, कुत्ता, भालू और बिल्ली जैसे जीव आते हैं, जो मुख्य रूप से शिकार पर निर्भर होते हैं।
+</p>
+
+<h2 class="section-title">
+Carnivora के सदस्य
+</h2>
+
+<div class="creatures">
+
+<div class="creature">
+
+<img src="https://images.unsplash.com/photo-1517423440428-a5a00ad493e8?q=80&w=1200&auto=format&fit=crop">
+
+<div class="creature-body">
+
+<h3>कुत्ता</h3>
+
+<p>
+वफादार मांसाहारी साथी।
+</p>
+
+</div>
+</div>
+
+<div class="creature">
+
+<img src="https://images.unsplash.com/photo-1503066211613-c17ebc9daef0?q=80&w=1200&auto=format&fit=crop">
+
+<div class="creature-body">
+
+<h3>बाघ</h3>
+
+<p>
+विशाल और शक्तिशाली शिकारी।
+</p>
+
+</div>
+</div>
+
+<div class="creature">
+
+<img src="https://images.unsplash.com/photo-1495360010541-f48722b34f7d?q=80&w=1200&auto=format&fit=crop">
+
+<div class="creature-body">
+
+<h3>बिल्ली</h3>
+
+<p>
+उत्कृष्ट शिकारी कौशल वाली।
+</p>
+
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+</div>
+
+<div class="taxonomy-card hidden">
+
+<div class="taxonomy-header">
+
+<div class="left">
+
+<img src="https://images.unsplash.com/photo-1561731216-c3a4d99437d5?q=80&w=1200&auto=format&fit=crop">
+
+<div>
+
+<div class="rank">Family</div>
+
+<div class="name">Felidae</div>
+
+<div class="scientific">
+<strong>बिल्ली परिवार -> </strong> Felidae परिवार में सभी प्रकार की बिल्लियाँ (बड़ी और छोटी) आती हैं।
+</div>
+
+</div>
+</div>
+
+<div class="arrow">⌄</div>
+
+</div>
+
+<div class="content">
+
+<div class="content-inner">
+
+<p class="description">
+Felidae परिवार में बाघ, शेर, तेंदुआ, चीता और हमारी घरेलू बिल्ली जैसी सभी प्रजातियां शामिल हैं।
+</p>
+
+<h2 class="section-title">
+Felidae सदस्य
+</h2>
+
+<div class="creatures">
+
+<div class="creature">
+
+<img src="https://images.unsplash.com/photo-1549366021-9f761d450615?q=80&w=1200&auto=format&fit=crop">
+
+<div class="creature-body">
+
+<h3>शेर</h3>
+
+<p>
+बिल्ली परिवार का सामाजिक सदस्य।
+</p>
+
+</div>
+</div>
+
+<div class="creature">
+
+<img src="https://images.unsplash.com/photo-1525424750244-88402db0ccf7?q=80&w=1200&auto=format&fit=crop">
+
+<div class="creature-body">
+
+<h3>चीता</h3>
+
+<p>
+धरती का सबसे तेज़ धावक।
+</p>
+
+</div>
+</div>
+
+<div class="creature">
+
+<img src="https://images.unsplash.com/photo-1533738363-b7f9aef128ce?q=80&w=1200&auto=format&fit=crop">
+
+<div class="creature-body">
+
+<h3>घरेलू बिल्ली</h3>
+
+<p>
+Felidae परिवार की छोटी सदस्य।
+</p>
+
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+</div>
+
+<div class="taxonomy-card hidden">
+
+<div class="taxonomy-header">
+
+<div class="left">
+
+<img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=1200&auto=format&fit=crop">
+
+<div>
+
+<div class="rank">Genus</div>
+
+<div class="name">Felis</div>
+
+<div class="scientific">
+<strong>छोटी बिल्लियाँ -> </strong> Felis वंश में छोटी जंगली और पालतू बिल्लियां शामिल हैं।
+</div>
+
+</div>
+</div>
+
+<div class="arrow">⌄</div>
+
+</div>
+
+<div class="content">
+
+<div class="content-inner">
+
+<p class="description">
+Felis वंश में मुख्य रूप से छोटे आकार की बिल्लियां आती हैं जो दुनिया भर में पाई जाती हैं।
+</p>
+
+<h2 class="section-title">
+Felis के सदस्य
+</h2>
+
+<div class="creatures">
+
+<div class="creature">
+
+<img src="https://images.unsplash.com/photo-1589883661500-1e5285741632?q=80&w=1200&auto=format&fit=crop">
+
+<div class="creature-body">
+
+<h3>Felis chaus</h3>
+
+<p>
+जंगली बिल्ली (Jungle cat)।
+</p>
+
+</div>
+</div>
+
+<div class="creature">
+
+<img src="https://images.unsplash.com/photo-1513360371669-4adf3dd7dff8?q=80&w=1200&auto=format&fit=crop">
+
+<div class="creature-body">
+
+<h3>Felis catus</h3>
+
+<p>
+आधुनिक पालतू बिल्ली।
+</p>
+
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+</div>
+
+<div class="taxonomy-card hidden">
+
+<div class="taxonomy-header">
+
+<div class="left">
+
+<img src="https://images.unsplash.com/photo-1495360010541-f48722b34f7d?q=80&w=1200&auto=format&fit=crop">
+
+<div>
+
+<div class="rank">Species</div>
+
+<div class="name">Felis catus</div>
+
+<div class="scientific">
+<strong>घरेलू बिल्ली -> </strong> Felis catus हमारी आम पालतू बिल्ली की प्रजाति है। 
+</div>
+
+</div>
+</div>
+
+<div class="arrow">⌄</div>
+
+</div>
+
+<div class="content">
+
+<div class="content-inner">
+
+<p class="description">
+Felis catus (घरेलू बिल्ली) इंसानों के साथ रहने वाली एक बहुत ही लोकप्रिय और स्वतंत्र प्रजाति है।
+</p>
+
+<h2 class="section-title">
+बिल्ली की विशेषताएँ
+</h2>
+
+<div class="creatures">
+
+<div class="creature">
+
+<img src="https://images.unsplash.com/photo-1518791841217-8f162f1e1131?q=80&w=1200&auto=format&fit=crop">
+
+<div class="creature-body">
+
+<h3>चपलता</h3>
+
+<p>
+अत्यधिक फुर्ती और संतुलन क्षमता।
+</p>
+
+</div>
+</div>
+
+<div class="creature">
+
+<img src="https://images.unsplash.com/photo-1548681528-6a5c45b66b42?q=80&w=1200&auto=format&fit=crop">
+
+<div class="creature-body">
+
+<h3>शिकार</h3>
+
+<p>
+चूहों और छोटे जीवों का शिकार।
+</p>
+
+</div>
+</div>
+
+<div class="creature">
+
+<img src="https://images.unsplash.com/photo-1573865526739-10659fec78a5?q=80&w=1200&auto=format&fit=crop">
+
+<div class="creature-body">
+
+<h3>देखने की क्षमता</h3>
+
+<p>
+अंधेरे में बेहतरीन दृष्टि (Night vision)।
+</p>
+
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+</div>
+
+</div>
+
+<footer>
+
+Beautiful Customizable Taxonomy Explorer
+
+</footer>
+
+<script>
+
+/* =========================
+   ACCORDION
+========================= */
+
+const cards =
+document.querySelectorAll(".taxonomy-card");
+
+cards.forEach(card=>{
+
+    const header =
+    card.querySelector(".taxonomy-header");
+
+    header.addEventListener("click",()=>{
+
+        card.classList.toggle("active");
+
+        const content =
+        card.querySelector(".content");
+
+        if(content.style.maxHeight){
+
+            content.style.maxHeight = null;
+
+        }else{
+
+            content.style.maxHeight =
+            content.scrollHeight + "px";
+
+        }
+
+    });
+
+});
+
+/* =========================
+   SCROLL ANIMATION
+========================= */
+
+const observer =
+new IntersectionObserver((entries)=>{
+
+entries.forEach((entry)=>{
+
+if(entry.isIntersecting){
+
+entry.target.classList.add("show");
+
+}
+
+});
+
+});
+
+const hiddenElements =
+document.querySelectorAll(".hidden");
+
+hiddenElements.forEach((el)=>
+observer.observe(el));
+
+</script>
+
+</body>
+</html>
