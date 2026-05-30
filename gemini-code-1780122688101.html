@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Playable 2.5D Game</title>
+    <style>
+        body { 
+            background-color: #1a1a1a; 
+            color: #eeeeee; 
+            text-align: center; 
+            font-family: sans-serif; 
+        }
+        canvas { 
+            background-color: #2a2a2a; 
+            border: 2px solid #555; 
+            margin-top: 10px; 
+            box-shadow: 0px 10px 20px rgba(0,0,0,0.5);
+        }
+        p { color: #aaaaaa; }
+    </style>
+</head>
+<body>
+    <h2>2.5D Isometric Game</h2>
+    <p>प्लेयर को चलाने के लिए कीबोर्ड के <b>Arrow Keys (ऊपर, नीचे, बाएँ, दाएँ)</b> का इस्तेमाल करें!</p>
+    <canvas id="gameCanvas" width="800" height="500"></canvas>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // 1. गेम का मैप: 0 = चलने वाली जगह (Floor), 2 = दीवार (Wall)
+        const map = [
+            [2, 2, 2, 2, 2, 2, 2],
+            [2, 0, 0, 0, 0, 0, 2],
+            [2, 0, 2, 2, 0, 0, 2],
+            [2, 0, 0, 2, 0, 0, 2],
+            [2, 2, 0, 0, 0, 0, 2],
+            [2, 2, 2, 2, 2, 2, 2]
+        ];
+
+        // 2. प्लेयर की सेटिंग
+        let player = {
+            x: 1, // X पोजीशन (शुरुआत)
+            y: 1  // Y पोजीशन (शुरुआत)
+        };
+
+        const tileWidth = 60; 
+        const tileHeight = 30;
+        const offsetX = canvas.width / 2;
+        const offsetY = 100;
+
+        // 3. ब्लॉक बनाने का फंक्शन
+        function drawIsometricBlock(x, y, type, isPlayer = false) {
+            const isoX = (x - y) * (tileWidth / 2) + offsetX;
+            const isoY = (x + y) * (tileHeight / 2) + offsetY;
+
+            // अगर यह जमीन (0) है, तो सिर्फ एक चपटा डायमंड बनाएँ
+            if (type === 0 && !isPlayer) {
+                ctx.beginPath();
+                ctx.moveTo(isoX, isoY);
+                ctx.lineTo(isoX + tileWidth / 2, isoY + tileHeight / 2);
+                ctx.lineTo(isoX, isoY + tileHeight);
+                ctx.lineTo(isoX - tileWidth / 2, isoY + tileHeight / 2);
+                ctx.closePath();
+                ctx.fillStyle = '#444'; // जमीन का रंग
+                ctx.fill();
+                ctx.strokeStyle = '#222';
+                ctx.stroke();
+                return;
+            }
+
+            // प्लेयर और दीवारों की ऊंचाई और रंग तय करें
+            let zHeight = isPlayer ? 20 : 40; 
+            let topColor = isPlayer ? '#4488ff' : '#cc5555';
+            let leftColor = isPlayer ? '#2266dd' : '#aa3333';
+            let rightColor = isPlayer ? '#1144aa' : '#881111';
+
+            // ऊपरी हिस्सा (Top Face)
+            ctx.beginPath();
+            ctx.moveTo(isoX, isoY - zHeight);
+            ctx.lineTo(isoX + tileWidth / 2, isoY + tileHeight / 2 - zHeight);
+            ctx.lineTo(isoX, isoY + tileHeight - zHeight);
+            ctx.lineTo(isoX - tileWidth / 2, isoY + tileHeight / 2 - zHeight);
+            ctx.closePath();
+            ctx.fillStyle = topColor;
+            ctx.fill();
+            ctx.strokeStyle = '#111';
+            ctx.stroke();
+
+            // बायाँ हिस्सा (Left Face)
+            ctx.beginPath();
+            ctx.moveTo(isoX - tileWidth / 2, isoY + tileHeight / 2 - zHeight);
+            ctx.lineTo(isoX, isoY + tileHeight - zHeight);
+            ctx.lineTo(isoX, isoY + tileHeight);
+            ctx.lineTo(isoX - tileWidth / 2, isoY + tileHeight / 2);
+            ctx.closePath();
+            ctx.fillStyle = leftColor;
+            ctx.fill();
+            ctx.stroke();
+
+            // दायाँ हिस्सा (Right Face)
+            ctx.beginPath();
+            ctx.moveTo(isoX, isoY + tileHeight - zHeight);
+            ctx.lineTo(isoX + tileWidth / 2, isoY + tileHeight / 2 - zHeight);
+            ctx.lineTo(isoX + tileWidth / 2, isoY + tileHeight / 2);
+            ctx.lineTo(isoX, isoY + tileHeight);
+            ctx.closePath();
+            ctx.fillStyle = rightColor;
+            ctx.fill();
+            ctx.stroke();
+        }
+
+        // 4. रेंडर (स्क्रीन पर दिखाने का काम)
+        function render() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            for (let y = 0; y < map.length; y++) {
+                for (let x = 0; x < map[y].length; x++) {
+                    // पहले जमीन या दीवार बनाएँ
+                    drawIsometricBlock(x, y, map[y][x]);
+                    
+                    // अगर प्लेयर इसी ब्लॉक पर है, तो प्लेयर को जमीन के ऊपर बनाएँ
+                    if (player.x === x && player.y === y) {
+                        drawIsometricBlock(x, y, 1, true); // प्लेयर को ड्रा करें
+                    }
+                }
+            }
+        }
+
+        // 5. कीबोर्ड कंट्रोल्स (Keyboard Input)
+        window.addEventListener('keydown', (e) => {
+            let nextX = player.x;
+            let nextY = player.y;
+
+            if (e.key === 'ArrowUp') nextY--;    // ऊपर
+            if (e.key === 'ArrowDown') nextY++;  // नीचे
+            if (e.key === 'ArrowLeft') nextX--;  // बाएँ
+            if (e.key === 'ArrowRight') nextX++; // दाएँ
+
+            // चेक करें कि क्या अगली जगह खाली है (0) या दीवार (2) है
+            if (map[nextY] && map[nextY][nextX] === 0) {
+                player.x = nextX;
+                player.y = nextY;
+            }
+            
+            render(); // चलने के बाद स्क्रीन को फिर से अपडेट करें
+        });
+
+        // गेम शुरू करें
+        render();
+    </script>
+</body>
+</html>
